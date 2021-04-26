@@ -1,9 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
-//#include "homee.hpp"
 #include "virtualHomee.hpp"
-#include "ArduinoJson.h"
-#include "nodes.hpp"
 
 #ifndef pSSID
   #define pSSID "WLAN"
