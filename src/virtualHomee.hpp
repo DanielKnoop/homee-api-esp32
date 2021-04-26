@@ -1,3 +1,6 @@
+#ifndef virtualHomee_hpp
+#define virtualHomee_hpp
+
 #include <Arduino.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -6,9 +9,6 @@
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "nodes.hpp"
-
-#ifndef virtualHomee_hpp
-#define virtualHomee_hpp
 
 class virtualHomee
 {

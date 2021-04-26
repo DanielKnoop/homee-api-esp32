@@ -164,16 +164,12 @@ void virtualHomee::start()
                     int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
                     double_t targetValue = this->getUrlParameterValue(message, "target_value").toDouble();
 
-                    //Serial.println( message.substring(message.indexOf("IDs="))); //IDs=200&target_value=0.000000
-
-
                     nodeAttributes* changedNode = this->getAttributeWithId(attributeId);
                     changedNode->setTargetValue(targetValue);
-
                 } else if(message.equalsIgnoreCase("ping")) {
                     client->text("pong") ;
                 } else if(message.substring(0, 10).equalsIgnoreCase("POST:nodes")) { //"POST:nodes?protocol=21&compatibility_check=1&my_version=2.32.0+eb5e9b1a
-                    //strtok((char*)message.c_str(), "?")
+
                     if(message.indexOf("compatibility_check=1") >= 0)
                     {
                         DynamicJsonDocument doc(512);
@@ -243,5 +239,5 @@ virtualHomee::virtualHomee()
 
 virtualHomee::~virtualHomee()
 {
-
+    ws.closeAll();
 }

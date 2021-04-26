@@ -1,8 +1,8 @@
-#include "ArduinoJson.h"
-#include "nodeattributes.hpp"
-
 #ifndef node_hpp
 #define node_hpp
+
+#include "ArduinoJson.h"
+#include "nodeattributes.hpp"
 
 class node
 {

@@ -1,3 +1,6 @@
+#ifndef homee_hpp
+#define homee_hpp
+
 #include <Arduino.h>
 #include <Crypto.h>
 #include <SHA512.h>
@@ -8,9 +11,6 @@
 #include <time.h>
 
 #define HASH_SIZE 64
-
-#ifndef homee_hpp
-#define homee_hpp
 
 class homee
 {
