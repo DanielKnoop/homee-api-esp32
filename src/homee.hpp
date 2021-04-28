@@ -1,14 +1,22 @@
+#ifdef USEIT
+
 #ifndef homee_hpp
 #define homee_hpp
+
+#if defined(ESP32)
+#include <WiFi.h>
+
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#endif
 
 #include <Arduino.h>
 #include <Crypto.h>
 #include <SHA512.h>
 #include <base64.h>
-#include <WiFi.h>
-#include <HTTPClient.h>
 #include <Preferences.h>
 #include <time.h>
+#include <HTTPClient.h>
 
 #define HASH_SIZE 64
 
@@ -31,5 +39,7 @@ public:
     ~homee();
 };
 
+
+#endif
 
 #endif

@@ -1,4 +1,4 @@
-
+#ifdef USEIT
 #include "homee.hpp"
 
 SHA512 sha512;
@@ -82,3 +82,4 @@ homee::~homee()
 {
     preferences.end();
 }
+#endif
