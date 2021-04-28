@@ -1,6 +1,11 @@
 #include <Arduino.h>
-#include <WiFi.h>
 #include "virtualHomee.hpp"
+
+#if defined(ESP32)
+#include <WiFi.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#endif
 
 #ifndef pSSID
   #define pSSID "WLAN"
@@ -68,7 +73,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  sleep(10);
+  //sleep(10);
+  delay(10000);
 
   na1->setCurrentValue(random(-20, 60));
   vhih.updateAttribute(na1);
