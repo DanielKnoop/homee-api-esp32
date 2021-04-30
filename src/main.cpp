@@ -1,3 +1,5 @@
+#if  defined(_build_debug_)
+
 #include <Arduino.h>
 #include "virtualHomee.hpp"
 
@@ -79,3 +81,4 @@ void loop() {
   na1->setCurrentValue(random(-20, 60));
   vhih.updateAttribute(na1);
 }
+#endif
