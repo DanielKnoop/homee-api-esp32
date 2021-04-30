@@ -47,10 +47,10 @@ void setup() {
   na1 = n1->AddAttributes(new nodeAttributes(5)); //CAAttributeTypeTemperature
   na2 = n1->AddAttributes(new nodeAttributes(7)); //CAAttributeTypeRelativeHumidity
 
-  na1->setUnit("%C2%B0C");
+  na1->setUnit("°C");
   na1->setMinimumValue(-20);
   na1->setMaximumValue(60);
-  na2->setUnit("%25");
+  na2->setUnit("%");
   
 
   node* n2 = new node(20, 10, "Schalter");
