@@ -71,7 +71,13 @@ void setup()
 }
 ```
 
-Wenn der vhih fertig eingerichtet ist
+Wenn der vhih fertig eingerichtet ist muss er noch mit 
+```cpp
+vhih.start();
+```
+gestartet werden.
+
+Um den Sensor zum homee hinzuzufügen sucht man in der homee-app unter Geräte hinzufügen nach "homee in homee" und wählt dort "mit homee verbinden" aus. Hier gibt man die IP des ESP ein sowie irgendein Benutzernamen und Kennwort. Die Zugangsdaten werden vom vhih nicht geprüft, daher sind diese nicht relevant.
 
 Das Projekt ist angelehnt an die node-red Implementierung [node-red-contrib-homee](https://github.com/stfnhmplr/node-red-contrib-homee)
 von stfnhmplr. Vielen Dank, auch an alle anderen Vorreiter aus dem [homee-Forum](https://community.hom.ee).
