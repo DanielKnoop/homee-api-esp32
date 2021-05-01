@@ -20,10 +20,9 @@
     "license": "MIT",
     "homepage": "https://github.com/DanielKnoop/homee-api-esp32",
     "dependencies": {
-      	"ottowinter/ESPAsyncTCP-esphome": "^1.2.3",
+      "ottowinter/ESPAsyncTCP-esphome": "^1.2.3",
 	    "ottowinter/ESPAsyncWebServer-esphome": "^1.2.7",
-	    "bblanchon/ArduinoJson": "^6.17.3",
-	    "amcewen/HttpClient": "^2.2.0"
+	    "bblanchon/ArduinoJson": "^6.17.3"
     },
     "frameworks": "arduino",
     "platforms": "espressif32, espressif8266"
