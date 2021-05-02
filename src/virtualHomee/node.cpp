@@ -17,7 +17,7 @@ uint8_t node::GetNumberOfAttributes()
 
 nodeAttributes* node::GetAttribute(uint8_t n)
 {
-    if(n < this->numberOfAttributes)
+    if(n < this->GetNumberOfAttributes())
     {
         return attributes[n];
     }
@@ -49,7 +49,7 @@ node::node(uint32_t id, uint32_t profile, String name)
 uint8_t node::calculateNextInstance(uint16_t _type)
 {
     uint8_t occurrence = 0;
-    for (int i = 0; i < this->numberOfAttributes; i++)
+    for (int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         if(attributes[i]->getType() == _type)
         {
@@ -61,10 +61,10 @@ uint8_t node::calculateNextInstance(uint16_t _type)
 
 nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
 {
-    if(this->numberOfAttributes > MAX_NUMBER_OF_ATTRIBUTES)
+    if(this->GetNumberOfAttributes() > MAX_NUMBER_OF_ATTRIBUTES)
         return nullptr;
     attributes->setNodeId(this->id);
-    attributes->setId(this->numberOfAttributes + 10 * this->id);
+    attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->id);
     attributes->setInstance(this->calculateNextInstance(attributes->getType()));
     this->attributes[this->numberOfAttributes++] = attributes;
     return attributes;

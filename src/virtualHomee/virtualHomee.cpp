@@ -51,7 +51,6 @@ nodeAttributes* virtualHomee::getAttributeWithId(uint32_t id)
             }
         }
     }
-
     return nullptr;
 }
 
@@ -151,9 +150,26 @@ void virtualHomee::start()
 #endif
                 } else if(message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) { //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                     int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("Attribute ID: ");
+                    Serial.println(attributeId);
+#endif
                     double_t targetValue = atof(this->getUrlParameterValue(message, "target_value").c_str());
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("Target Value: ");
+                    Serial.println(targetValue);
+#endif
                     nodeAttributes* changedNode = this->getAttributeWithId(attributeId);
-                    changedNode->setTargetValue(targetValue);
+                    if(changedNode != nullptr)
+                    {
+                        changedNode->setTargetValue(targetValue);
+                    }
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    else
+                    {
+                        Serial.println("Achtung: Node nicht gefunden");
+                    }
+#endif
                 } else if(message.equalsIgnoreCase("ping")) {
                     client->text("pong") ;
                 } else if(message.substring(0, 10).equalsIgnoreCase("POST:nodes")) { //"POST:nodes?protocol=21&compatibility_check=1&my_version=2.32.0+eb5e9b1a

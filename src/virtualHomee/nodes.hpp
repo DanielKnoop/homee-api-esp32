@@ -3,8 +3,6 @@
 #include "ArduinoJson.h"
 #include "node.hpp"
 
-#define MAX_NUMBER_OF_NODES 99
-
 class nodes
 {
     private:

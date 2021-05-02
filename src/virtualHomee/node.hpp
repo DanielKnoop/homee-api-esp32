@@ -3,6 +3,7 @@
 #include "ArduinoJson.h"
 #include "nodeattributes.hpp"
 
+#define MAX_NUMBER_OF_NODES 99
 #define MAX_NUMBER_OF_ATTRIBUTES 99
 
 class node
