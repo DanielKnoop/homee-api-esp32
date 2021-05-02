@@ -1,7 +1,6 @@
 #ifdef USEIT
 
-#ifndef homee_hpp
-#define homee_hpp
+#pragma once
 
 #if defined(ESP32)
 #include <WiFi.h>
@@ -39,7 +38,5 @@ public:
     ~homee();
 };
 
-
-#endif
 
 #endif

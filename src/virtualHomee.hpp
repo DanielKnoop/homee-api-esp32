@@ -1,5 +1,4 @@
-#ifndef virtualHomee_hpp
-#define virtualHomee_hpp
+#pragma once
 
 #if defined(ESP32)
 #include <WiFi.h>
@@ -14,14 +13,13 @@
 #include <AsyncWebSocket.h>
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
-#include "nodes.hpp"
+#include "virtualHomee/nodes.hpp"
 
 class virtualHomee
 {
 private:
     String homeeId;
     String version;
-    String settings;
     String access_token;
 
     AsyncWebServer server;
@@ -29,11 +27,10 @@ private:
 
     nodes nds;
 
-    void setSettings();
+    DynamicJsonDocument getSettings();
 
     nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(String url, String parameterName);
-
 public:
     void start();
     void addNode(node* n);
@@ -42,5 +39,3 @@ public:
     virtualHomee();
     ~virtualHomee();
 };
-
-#endif

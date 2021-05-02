@@ -1,8 +1,9 @@
-#ifndef node_hpp
-#define node_hpp
+#pragma once
 
 #include "ArduinoJson.h"
 #include "nodeattributes.hpp"
+
+#define MAX_NUMBER_OF_ATTRIBUTES 99
 
 class node
 {
@@ -25,7 +26,7 @@ class node
         String phonetic_name;
         uint8_t owner;
         uint8_t security;
-        nodeAttributes* attributes[10];
+        nodeAttributes* attributes[MAX_NUMBER_OF_ATTRIBUTES];
         uint8_t numberOfAttributes = 0;
 
         uint8_t calculateNextInstance(uint16_t _type);
@@ -35,6 +36,5 @@ class node
         DynamicJsonDocument GetJSONObject();
         uint8_t GetNumberOfAttributes();
         nodeAttributes* GetAttribute(uint8_t n);
+        size_t size();
 };
-
-#endif

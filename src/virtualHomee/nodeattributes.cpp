@@ -2,7 +2,7 @@
 
 DynamicJsonDocument nodeAttributes::GetJSONArray()
 {
-    DynamicJsonDocument doc(512);
+    DynamicJsonDocument doc(this->size());
 
     doc["id"] = this->id;
     doc["node_id"] = this->node_id;
@@ -25,6 +25,26 @@ DynamicJsonDocument nodeAttributes::GetJSONArray()
     doc["name"] = this->name;
 
     return doc;
+}
+
+double_t nodeAttributes::getMinimumValue()
+{
+    return this->minimum;
+}
+
+double_t nodeAttributes::getMaximumValue()
+{
+    return this->maximum;
+}
+
+double_t nodeAttributes::getCurrentValue()
+{
+    return this->current_value;
+}
+
+size_t nodeAttributes::size()
+{
+    return 350;
 }
 
 void nodeAttributes::setMinimumValue(double_t _min)

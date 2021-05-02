@@ -1,7 +1,7 @@
 #include "virtualHomee.hpp"
 
-void virtualHomee::setSettings() {
-    DynamicJsonDocument doc(1024);
+DynamicJsonDocument virtualHomee::getSettings() {
+    DynamicJsonDocument doc(600);
     doc["settings"]["address"] = "";
     doc["settings"]["city"] = "";
     doc["settings"]["zip"] = 11111;
@@ -24,43 +24,14 @@ void virtualHomee::setSettings() {
     doc["settings"]["wlan_mode"] = 2;
     doc["settings"]["online"] = 0;
     doc["settings"]["lan_enabled"] = 1;
-    doc["settings"]["available_ssids"] = serialized("[\"homeeWifi\"]");
+    doc["settings"].createNestedArray("available_ssids").add("homeeWifi"); // = serialized("[\"homeeWifi\"]");
     doc["settings"]["time"] = 1562707105;
     doc["settings"]["civil_time"] = "2019-07-09 23:18:25";
     doc["settings"]["version"] = this->version;
     doc["settings"]["uid"] = this->homeeId;
     doc["settings"]["gateway_id"] = 1313337;
-    doc["settings"]["cubes"] = serialized("[]");
-    doc["settings"]["extensions"] = serialized("{   \
-        \"weather\": {                      \
-            \"enabled\": 1                 \
-        },                              \
-        \"amazon_alexa\": {                 \
-            \"enabled\": 0                 \
-        },                              \
-        \"google_assistant\": {             \
-            \"enabled\": 0,                 \
-            \"syncing\": 0                 \
-        },                              \
-        \"apple_homekit\": {                \
-            \"enabled\": 0,                 \
-            \"paired\": 0,                  \
-            \"config_number\": 1,           \
-            \"syncing\": 0                 \
-        },                              \
-        \"ftp\": {                          \
-            \"enabled\": 0                 \
-        },                              \
-        \"history\": {                      \
-            \"enabled\": 0                 \
-        },                              \
-        \"backup\": {                       \
-            \"enabled\": 0                 \
-        }}");
-    String json;
-    
-    serializeJson(doc, json);
-    settings = json;
+    doc["settings"].createNestedArray("cubes");
+    return doc;
 }
 
 void virtualHomee::addNode(node* n)
@@ -86,14 +57,19 @@ nodeAttributes* virtualHomee::getAttributeWithId(uint32_t id)
 
 void virtualHomee::updateAttribute(nodeAttributes* _nodeAttribute)
 {
+    ws.cleanupClients();
     DynamicJsonDocument attributeJson = _nodeAttribute->GetJSONArray();
-    DynamicJsonDocument doc(512 + 32);
+    DynamicJsonDocument doc(400);
     doc["attribute"] = attributeJson;
 
-    String json;
-    serializeJson(doc, json);
+    char json[400];
+    size_t len = serializeJson(doc, json, 400);
+    ws.textAll(json, len);
+#ifdef DEBUG_VIRTUAL_HOMEE
+    Serial.print("DEBUG: compatibility_check. JSON Length: ");
+    Serial.println(len);
     Serial.println(json);
-    ws.textAll(json);
+#endif
 }
 
 String virtualHomee::getUrlParameterValue(String url, String parameterName)
@@ -112,14 +88,12 @@ String virtualHomee::getUrlParameterValue(String url, String parameterName)
 }
 
 void virtualHomee::start() 
-{
-    
+{   
     server.on("/access_token", HTTP_OPTIONS, [](AsyncWebServerRequest *request){
         AsyncWebServerResponse *response = request->beginResponse(204);
         response->addHeader("access-control-allow-methods", "POST, DELETE");
         response->addHeader("access-control-allow-origin", "*");
         request->send(response);
-        Serial.println("OPTIONS Request");
     });
 
     server.on("/access_token", HTTP_DELETE, [](AsyncWebServerRequest *request) {
@@ -132,19 +106,21 @@ void virtualHomee::start()
             , "access_token=" + this->access_token + "&user_id=1&device_id=1&expires=31536000");
         response->addHeader("set-cookie", "access_token=" + this->access_token + ";Max-Age=2592000;");
         request->send(response);
-        Serial.println(request->url());
     });
+
     ws.onEvent([this](AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
         if(type == WS_EVT_CONNECT) {
-            //client connected
+#ifdef DEBUG_VIRTUAL_HOMEE
             Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
-            //client->printf("Hello Client %u :)", client->id());
-            //client->ping();
+#endif
         } else if(type == WS_EVT_DISCONNECT) {
-            //client disconnected
+#ifdef DEBUG_VIRTUAL_HOMEE            
             Serial.printf("ws[%s] disconnect: %u\n", server->url(), client->id());
+#endif
         } else if(type == WS_EVT_PONG) {
+#ifdef DEBUG_VIRTUAL_HOMEE            
             Serial.println("PONG");
+#endif
         } else if(type == WS_EVT_DATA) {
             AwsFrameInfo * info = (AwsFrameInfo*)arg;
             if(info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
@@ -152,18 +128,28 @@ void virtualHomee::start()
                 String message = (char*)data;
                 Serial.println(message);
                 if(message.equalsIgnoreCase("GET:Settings")) {
-                    client->text(settings);
-                } else if(message.equalsIgnoreCase("GET:nodes")) { 
-                    String json;
-                    serializeJson(nds.GetJSONArray(), json);
+                    DynamicJsonDocument doc = this->getSettings();
+                    char json[600];
+                    size_t len = serializeJson(doc, json, 600);
+                    client->text(json, len);
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("DEBUG: Get Settings. JSON Length: ");
+                    Serial.println(len);
                     Serial.println(json);
-                    client->text(json);
-                } else if(message.equalsIgnoreCase("GET:all")) { 
-
+#endif
+                } else if(message.equalsIgnoreCase("GET:nodes")) { 
+                    size_t s = nds.size();
+                    char json[s];
+                    size_t len = serializeJson(nds.GetJSONArray(), json, s);
+                    client->text(json, len);
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("DEBUG: get nodes. JSON Length: ");
+                    Serial.println(len);
+                    Serial.println(json);
+#endif
                 } else if(message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) { //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                     int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
                     double_t targetValue = atof(this->getUrlParameterValue(message, "target_value").c_str());
-
                     nodeAttributes* changedNode = this->getAttributeWithId(attributeId);
                     changedNode->setTargetValue(targetValue);
                 } else if(message.equalsIgnoreCase("ping")) {
@@ -172,7 +158,7 @@ void virtualHomee::start()
 
                     if(message.indexOf("compatibility_check=1") >= 0)
                     {
-                        DynamicJsonDocument doc(512);
+                        StaticJsonDocument<200> doc;
                         doc["compatibility_check"]["compatible"] = true;
                         doc["compatibility_check"]["account"] = true;
                         doc["compatibility_check"]["external_homee_status"] = "none";
@@ -180,44 +166,54 @@ void virtualHomee::start()
                         doc["compatibility_check"]["my_version"] = this->version;
                         doc["compatibility_check"]["my_homeeID"] = this->homeeId;
 
-                        String json;
-                        serializeJson(doc, json);
+                        char json[200];
+                        size_t len = serializeJson(doc, json);
+                        client->text(json, len);
+#ifdef DEBUG_VIRTUAL_HOMEE                        
+                        Serial.print("DEBUG: compatibility_check. JSON Length: ");
+                        Serial.println(len);
                         Serial.println(json);
-
-                        client->text(json);
-
+#endif
                     } else if(message.indexOf("start_pairing=1") >= 0)
                     {
-                        DynamicJsonDocument doc(512);
+                        StaticJsonDocument<150> doc;
                         doc["pairing"]["access_token"] = this->access_token;
                         doc["pairing"]["expires"] = 31536000;
                         doc["pairing"]["userID"] = 1;
                         doc["pairing"]["deviceID"] = 1;
 
-                        String json;
-                        serializeJson(doc, json);
-
+                        char json[150];
+                        size_t len = serializeJson(doc, json);
+                        client->text(json, len);
+#ifdef DEBUG_VIRTUAL_HOMEE
+                        Serial.print("DEBUG: start_pairing. JSON Length: ");
+                        Serial.println(len);
                         Serial.println(json);
-                        client->text(json);
+#endif
                     }
 
                 } else if(message == "DELETE:users/1/devices/1") {
-                    DynamicJsonDocument doc(512);
+                    StaticJsonDocument<150> doc;
                     doc["warning"]["code"] = 600;
                     doc["warning"]["description"] = "Your device got removed.";
                     doc["warning"]["message"] = "You have been logged out.";
                     doc["warning"]["data"] = serialized("{}");
 
-                    String json;
-                    serializeJson(doc, json);
-                    client->text(json);
+                    char json[150];
+                    size_t len = serializeJson(doc, json);
+                    client->text(json, len);
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("DEBUG: Delete User. JSON Length: ");
+                    Serial.println(len);
+                    Serial.println(json);
+#endif
                 }
                 else {
                     
                 }
             }   
         }
-        
+        ws.cleanupClients();
     });
 
     server.addHandler(&ws);
@@ -233,7 +229,6 @@ virtualHomee::virtualHomee()
     this->homeeId = mac;
     this->version = "2.25.0 (ed9c50)";
     this->access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
-    this->setSettings();
     this->nds.AddNode(new node(-1, 1, "homee"));
 }
 

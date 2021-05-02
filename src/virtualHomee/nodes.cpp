@@ -1,13 +1,25 @@
 #include "nodes.hpp"
 
+size_t nodes::size()
+{
+    size_t s = 0;
+    for(uint8_t i = 0; i < this->GetNumberOfNodes(); i++)
+    {
+        s += this->GetNode(i)->size();
+    }
+    return s;
+}
+
 void nodes::AddNode(node* n_1)
 {
+    if(this->numberOfNodes > MAX_NUMBER_OF_NODES)
+        return;
     n[this->numberOfNodes++] = n_1;
 }
 
 DynamicJsonDocument nodes::GetJSONArray()
 {
-    DynamicJsonDocument ja(this->numberOfNodes * 1024);
+    DynamicJsonDocument ja(this->size());
     JsonArray nestedArray = ja.createNestedArray("nodes");
     for(int i = 0; i < this->numberOfNodes; i++)
     {

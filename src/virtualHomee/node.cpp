@@ -1,5 +1,15 @@
 #include "node.hpp"
 
+size_t node::size()
+{
+    size_t s = 350;
+    for(uint8_t i = 0; i < this->GetNumberOfAttributes(); i++)
+    {
+        s += this->GetAttribute(i)->size();
+    }
+    return s;
+}
+
 uint8_t node::GetNumberOfAttributes()
 {
     return this->numberOfAttributes;
@@ -51,6 +61,8 @@ uint8_t node::calculateNextInstance(uint16_t _type)
 
 nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
 {
+    if(this->numberOfAttributes > MAX_NUMBER_OF_ATTRIBUTES)
+        return nullptr;
     attributes->setNodeId(this->id);
     attributes->setId(this->numberOfAttributes + 10 * this->id);
     attributes->setInstance(this->calculateNextInstance(attributes->getType()));
@@ -60,7 +72,7 @@ nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
 
 DynamicJsonDocument node::GetJSONObject()
 {
-    DynamicJsonDocument jo(512 + this->numberOfAttributes * 512);
+    DynamicJsonDocument jo(this->size());
     jo["id"] = this->id;
     jo["name"] = this->name;
     jo["profile"] = this->profile;

@@ -1,5 +1,4 @@
-#ifndef nodeAttributes_hpp
-#define nodeAttributes_hpp
+#pragma once
 
 #include "ArduinoJson.h"
 
@@ -37,14 +36,17 @@ class nodeAttributes
         uint16_t getType();
         void setInstance(uint8_t _instance);
         void setMinimumValue(double_t _min);
+        double_t getMinimumValue();
         void setMaximumValue(double_t _max);
+        double_t getMaximumValue();
         void setUnit(String _unit);
         void setCurrentValue(double_t _currentValue);
+        double_t getCurrentValue();
         void setEditable(uint8_t _editable);
-        void setTargetValue(double_t _targetValue);
         double_t getTargetValue();
+        void setTargetValue(double_t _targetValue);
+        
         void setCallback(callbackFunction _callback);
         DynamicJsonDocument GetJSONArray();
+        size_t size();
 };
-
-#endif

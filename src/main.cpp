@@ -1,5 +1,7 @@
 #if  defined(_build_debug_)
 
+#define DEBUG_VIRTUAL_HOMEE
+
 #include <Arduino.h>
 #include "virtualHomee.hpp"
 
@@ -52,6 +54,7 @@ void setup() {
   na1->setUnit("°C");
   na1->setMinimumValue(-20);
   na1->setMaximumValue(60);
+  na1->setCurrentValue(21);
   na2->setUnit("%");
   
 
@@ -72,13 +75,26 @@ void setup() {
   vhih.start();
 }
 
+u_long lastMillis = 0;
+u_long duration = 60000;
+
 void loop() {
-  // put your main code here, to run repeatedly:
-
-  //sleep(10);
-  delay(10000);
-
-  na1->setCurrentValue(random(-20, 60));
-  vhih.updateAttribute(na1);
+  u_long currentMillis = millis();
+  if(lastMillis + duration < currentMillis)
+  {
+    lastMillis = currentMillis;
+    double_t randValue = random(-15, 15) / 10.0;
+    double_t newValue = na1->getCurrentValue() + randValue;
+    if(newValue < na1->getMinimumValue())
+    {
+      newValue = na1->getMinimumValue();
+    }
+    if(newValue > na1->getMaximumValue())
+    {
+      newValue = na1->getMaximumValue();
+    }
+    na1->setCurrentValue(newValue);
+    vhih.updateAttribute(na1);
+  }
 }
 #endif
