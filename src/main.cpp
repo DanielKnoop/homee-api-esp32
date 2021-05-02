@@ -57,7 +57,7 @@ void setup() {
   
 
   node* n2 = new node(20, 10, "Schalter");
-  schalterAttribute = n2->AddAttributes(new nodeAttributes(1));
+  schalterAttribute = n2->AddAttributes(new nodeAttributes(1, 200));
   schalterAttribute->setEditable(1);
   schalterAttribute->setMinimumValue(0);
   schalterAttribute->setMaximumValue(1);

@@ -64,7 +64,10 @@ nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
     if(this->GetNumberOfAttributes() > MAX_NUMBER_OF_ATTRIBUTES)
         return nullptr;
     attributes->setNodeId(this->id);
-    attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->id);
+    if(attributes->getId() == 0)
+    {
+        attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->id);
+    }
     attributes->setInstance(this->calculateNextInstance(attributes->getType()));
     this->attributes[this->numberOfAttributes++] = attributes;
     return attributes;

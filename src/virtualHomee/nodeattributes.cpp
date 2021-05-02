@@ -77,6 +77,12 @@ nodeAttributes::nodeAttributes(uint16_t _type)
     this->type = _type;
 }
 
+nodeAttributes::nodeAttributes(uint16_t _type, uint32_t _id)
+{
+    this->id = _id;
+    this->type = _type;
+}
+
 void nodeAttributes::setId(uint32_t _id)
 {
     this->id = _id;

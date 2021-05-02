@@ -7,8 +7,8 @@ class nodeAttributes
     private:
         using callbackFunction = void(*) (nodeAttributes* changedAttribute);
         callbackFunction callback = nullptr;
-        uint32_t id;
-        uint32_t node_id;
+        uint32_t id = 0;
+        uint32_t node_id = 0;
         uint8_t instance = 1;
         double_t minimum = 0;
         double_t maximum = 100;
@@ -28,6 +28,7 @@ class nodeAttributes
         String name = "";
     public:
         nodeAttributes(uint16_t _type);
+        nodeAttributes(uint16_t _type, uint32_t _id);
         
         void setId(uint32_t _id);
         uint32_t getId();
