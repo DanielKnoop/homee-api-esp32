@@ -126,7 +126,9 @@ void virtualHomee::start()
             if(info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
                 data[len] = 0;
                 String message = (char*)data;
+ #ifdef DEBUG_VIRTUAL_HOMEE               
                 Serial.println(message);
+#endif
                 if(message.equalsIgnoreCase("GET:Settings")) {
                     DynamicJsonDocument doc = this->getSettings();
                     char json[600];

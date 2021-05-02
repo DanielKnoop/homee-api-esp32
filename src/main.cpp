@@ -1,6 +1,4 @@
-#if  defined(_build_debug_)
-
-#define DEBUG_VIRTUAL_HOMEE
+#if  defined(EXAMPLE_BUILD)
 
 #include <Arduino.h>
 #include "virtualHomee.hpp"
