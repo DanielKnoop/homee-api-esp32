@@ -15,14 +15,14 @@ virtualHomee vhih;
 ```
 
 Diesem virtualHomee müssen Nodes hinzugefügt werden (Vorzugsweise im Bereich Setup).
-Es dürfen maximal 10 Nodes hinzugefügt werden.
+Es dürfen maximal 99 Nodes hinzugefügt werden.
 ```cpp
 node* n1 = new node(10, 3001, "Luftsensor");
 vhih.addNode(n1);
 ```
 Der Konstruktor vom Node nimmt dabei folgende Attribute entgegen: NodeId, Profile, Name
 
-Diesem Node müssen noch Attribute zugeordnet werden. Ein Node darf maximal 10 Attribute bekommen.
+Diesem Node müssen noch Attribute zugeordnet werden. Ein Node darf maximal 99 Attribute bekommen.
 
 ```cpp
     na1 = n1->AddAttributes(new nodeAttributes(5));
