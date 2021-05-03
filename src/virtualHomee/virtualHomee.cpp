@@ -236,6 +236,38 @@ void virtualHomee::start()
 
     server.addHandler(&ws);
     server.begin();
+    this->startDiscovery();
+}
+
+void virtualHomee::startDiscovery()
+{
+    if(udp.listen(15263))
+    {
+        Serial.print("UDP Listening on IP: ");
+        Serial.println(WiFi.localIP());
+        udp.onPacket([this](AsyncUDPPacket packet) 
+        {
+            String message = packet.readString();
+            Serial.print("UDP Message reveived: ");
+            Serial.println(message);
+
+            if(message.equalsIgnoreCase(this->gethomeeId()))
+            {
+                packet.printf("initialized:%s:%s:homee", this->gethomeeId().c_str(), this->gethomeeId().c_str());
+            }
+        });
+    }
+}
+
+String virtualHomee::gethomeeId()
+{
+    return this->homeeId;
+}
+
+virtualHomee::virtualHomee(String _homeeId) 
+    : virtualHomee()
+{
+    this->homeeId = _homeeId;
 }
 
 virtualHomee::virtualHomee()
