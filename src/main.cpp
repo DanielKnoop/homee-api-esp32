@@ -20,7 +20,7 @@
 const char* ssid = pSSID;
 const char* password = pWLANPASSWORD;
 
-virtualHomee vhih;
+virtualHomee vhih("esp1");
 
 nodeAttributes* na1;
 nodeAttributes* na2;
