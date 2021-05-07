@@ -2,7 +2,8 @@
 
 size_t node::size()
 {
-    size_t s = 350;
+    size_t s = 350 + this->name.length() + this->phonetic_name.length() 
+        + this->image.length() + this->note.length() ;
     for(uint8_t i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         s += this->GetAttribute(i)->size();
@@ -29,21 +30,6 @@ node::node(uint32_t id, uint32_t profile, String name)
     this->id = id;
     this->name = name;
     this->profile = profile;
-    this->image = "default";
-    this->favorite = 0;
-    this->order = 1;
-    this->protocol = 3;
-    this->routing = 0;
-    this->state = 1;
-    this->state_changed = 1618853497;
-    this->added = 1618853497;
-    this->history = 0;
-    this->cube_type = 3;
-    this->note = "";
-    this->services = 4;
-    this->phonetic_name = "";
-    this->owner = 1;
-    this->security = 0;
 }
 
 uint8_t node::calculateNextInstance(uint16_t _type)

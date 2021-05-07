@@ -9,24 +9,24 @@
 class node
 {
     private:
-        int32_t id;
-        String name;
-        uint32_t profile;
-        String image;
-        uint8_t favorite;
-        uint8_t order;
-        uint8_t protocol;
-        uint8_t routing;
-        uint8_t state;
-        uint32_t state_changed;
-        uint32_t added;
-        uint8_t history;
-        uint8_t cube_type;
-        String note;
-        uint8_t services;
-        String phonetic_name;
-        uint8_t owner;
-        uint8_t security;
+        int32_t id = 0;
+        String name = ""; 
+        uint32_t profile = 0;
+        String image = "default";
+        uint8_t favorite = 0;
+        uint8_t order = 1;
+        uint8_t protocol = 3;
+        uint8_t routing = 0;
+        uint8_t state = 1;
+        uint32_t state_changed = 1618853497;
+        uint32_t added = 1618853497;
+        uint8_t history = 0;
+        uint8_t cube_type = 3;
+        String note = "";
+        uint8_t services = 4;
+        String phonetic_name = "";
+        uint8_t owner = 1;
+        uint8_t security = 0;
         nodeAttributes* attributes[MAX_NUMBER_OF_ATTRIBUTES];
         uint8_t numberOfAttributes = 0;
 

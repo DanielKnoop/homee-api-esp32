@@ -44,7 +44,7 @@ double_t nodeAttributes::getCurrentValue()
 
 size_t nodeAttributes::size()
 {
-    return 350;
+    return 350 + this->name.length() + this->data.length() + this->unit.length();
 }
 
 void nodeAttributes::setMinimumValue(double_t _min)
