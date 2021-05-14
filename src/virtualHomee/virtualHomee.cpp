@@ -243,13 +243,17 @@ void virtualHomee::startDiscovery()
 {
     if(udp.listen(15263))
     {
+#ifdef DEBUG_VIRTUAL_HOMEE        
         Serial.print("UDP Listening on IP: ");
         Serial.println(WiFi.localIP());
+#endif
         udp.onPacket([this](AsyncUDPPacket packet) 
         {
             String message = packet.readString();
+#ifdef DEBUG_VIRTUAL_HOMEE            
             Serial.print("UDP Message reveived: ");
             Serial.println(message);
+#endif
 
             if(message.equalsIgnoreCase(this->gethomeeId()))
             {
