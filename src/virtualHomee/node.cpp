@@ -42,7 +42,7 @@ uint8_t node::calculateNextInstance(uint16_t _type)
             occurrence++;
         }
     }
-    return occurrence + 1;
+    return occurrence;
 }
 
 nodeAttributes* node::AddAttributes(nodeAttributes* attributes)

@@ -9,7 +9,7 @@ class nodeAttributes
         callbackFunction callback = nullptr;
         uint32_t id = 0;
         uint32_t node_id = 0;
-        uint8_t instance = 1;
+        uint8_t instance = 0;
         double_t minimum = 0;
         double_t maximum = 100;
         double_t current_value = 0;
