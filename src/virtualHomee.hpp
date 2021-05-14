@@ -3,15 +3,17 @@
 #if defined(ESP32)
 #include <WiFi.h>
 #include <AsyncTCP.h>
+#include <AsyncUDP.h>
 #elif defined(ESP8266)
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
+#include <ESPAsyncUDP.h>
 #endif
 
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncWebSocket.h>
-#include <AsyncUDP.h>
+
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "virtualHomee/nodes.hpp"

@@ -1,8 +1,12 @@
 {
     "name": "homee-api-esp32",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "A \"Hello world\" program is a computer program that outputs \"Hello World\" (or some variant) on a display device",
     "keywords": "homee, vhih, virtual homee",
+    "build":
+    {
+      "libCompatMode": "strict"
+    },
     "repository":
     {
       "type": "git",
@@ -19,10 +23,13 @@
     ],
     "license": "MIT",
     "homepage": "https://github.com/DanielKnoop/homee-api-esp32",
-    "dependencies": {
+    "dependencies": 
+    {
+      "bblanchon/ArduinoJson":"^6.17.3",
       "ottowinter/ESPAsyncTCP-esphome": "^1.2.3",
-	    "ottowinter/ESPAsyncWebServer-esphome": "^1.2.7",
-	    "bblanchon/ArduinoJson": "^6.17.3"
+      "ottowinter/AsyncTCP-esphome": "^1.2.1",
+      "ottowinter/ESPAsyncWebServer-esphome": "^1.2.7",
+      "ESPAsyncUDP": "https://github.com/DanielKnoop/ESPAsyncUDP.git"
     },
     "frameworks": "arduino",
     "platforms": "espressif32, espressif8266"
