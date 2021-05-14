@@ -1,6 +1,6 @@
 {
     "name": "homee-api-esp32",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "A \"Hello world\" program is a computer program that outputs \"Hello World\" (or some variant) on a display device",
     "keywords": "homee, vhih, virtual homee",
     "build":
