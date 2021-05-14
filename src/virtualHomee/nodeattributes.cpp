@@ -128,6 +128,16 @@ double_t nodeAttributes::getTargetValue()
     return this->target_value;
 }
 
+String nodeAttributes::getData()
+{
+    return this->data;
+}
+
+void nodeAttributes::setData(String _data)
+{
+    this->data = _data;
+}
+
 void nodeAttributes::setCallback(callbackFunction _callback)
 {
     this->callback = _callback;

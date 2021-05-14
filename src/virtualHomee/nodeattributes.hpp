@@ -46,6 +46,8 @@ class nodeAttributes
         void setEditable(uint8_t _editable);
         double_t getTargetValue();
         void setTargetValue(double_t _targetValue);
+        String getData();
+        void setData(String _data);
         
         void setCallback(callbackFunction _callback);
         DynamicJsonDocument GetJSONArray();
