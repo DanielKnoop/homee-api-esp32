@@ -139,15 +139,21 @@ void virtualHomee::start()
                     Serial.println(json);
 #endif
                 } else if(message.equalsIgnoreCase("GET:nodes")) { 
-                    size_t s = nds.size();
-                    char json[s];
-                    size_t len = serializeJson(nds.GetJSONArray(), json, s);
-                    client->text(json, len);
+
+                    DynamicJsonDocument doc = nds.GetJSONArray();
+                    size_t len = measureJson(doc);
+
 #ifdef DEBUG_VIRTUAL_HOMEE
-                    Serial.print("DEBUG: get nodes. JSON Length: ");
+                    Serial.print("DEBUG: Get Nodes. Len: ");
                     Serial.println(len);
-                    Serial.println(json);
 #endif
+
+                    AsyncWebSocketMessageBuffer * buffer = ws.makeBuffer(len);
+                    if(buffer)
+                    {
+                        serializeJson(doc,(char*)buffer->get(), len + 1);
+                        client->text(buffer);
+                    }
                 } else if(message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) { //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                     int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
 #ifdef DEBUG_VIRTUAL_HOMEE
