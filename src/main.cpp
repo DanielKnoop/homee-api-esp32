@@ -20,6 +20,10 @@
 const char* ssid = pSSID;
 const char* password = pWLANPASSWORD;
 
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 3600;
+const int   daylightOffset_sec = 3600;
+
 virtualHomee vhih("esp1");
 
 nodeAttributes* na1;
@@ -71,10 +75,12 @@ void setup() {
   vhih.addNode(n2);
 
   vhih.start();
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 
 u_long lastMillis = 0;
-u_long duration = 60000;
+u_long duration = 30000;
 
 void loop() {
   u_long currentMillis = millis();
@@ -91,8 +97,10 @@ void loop() {
     {
       newValue = na1->getMaximumValue();
     }
-    na1->setCurrentValue(newValue);
-    vhih.updateAttribute(na1);
+    vhih.updateAttributeValue(na1, newValue);
+    time_t now = time(&now);
+    Serial.print("Timestamp: ");
+    Serial.println((uint32_t) time(&now));
   }
 }
 #endif

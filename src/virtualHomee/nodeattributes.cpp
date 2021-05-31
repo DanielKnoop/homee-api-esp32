@@ -103,9 +103,17 @@ uint32_t nodeAttributes::getNodeId()
     return this->node_id;
 }
 
+uint32_t nodeAttributes::getTimestamp()
+{
+    time_t now = time(&now);
+    return time(&now);
+}
+
 void nodeAttributes::setCurrentValue(double_t _currentValue)
 {
+    this->last_value = this->current_value;
     this->current_value = _currentValue;
+    this->last_changed = getTimestamp();
 }
 
 void nodeAttributes::setEditable(uint8_t _editable)

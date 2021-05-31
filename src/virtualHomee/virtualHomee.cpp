@@ -57,18 +57,12 @@ nodeAttributes* virtualHomee::getAttributeWithId(uint32_t id)
 void virtualHomee::updateAttribute(nodeAttributes* _nodeAttribute)
 {
     ws.cleanupClients();
-    DynamicJsonDocument attributeJson = _nodeAttribute->GetJSONArray();
     DynamicJsonDocument doc(400);
-    doc["attribute"] = attributeJson;
-
-    char json[400];
-    size_t len = serializeJson(doc, json, 400);
-    ws.textAll(json, len);
-#ifdef DEBUG_VIRTUAL_HOMEE
-    Serial.print("DEBUG: compatibility_check. JSON Length: ");
-    Serial.println(len);
-    Serial.println(json);
-#endif
+    doc["attribute"] = _nodeAttribute->GetJSONArray();
+    size_t len = measureJson(doc);
+    AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(len);
+    serializeJson(doc, buffer->get(), len + 1);
+    ws.textAll(buffer);
 }
 
 String virtualHomee::getUrlParameterValue(String url, String parameterName)
@@ -267,6 +261,14 @@ void virtualHomee::startDiscovery()
             }
         });
     }
+}
+
+void virtualHomee::updateAttributeValue(nodeAttributes* _attribute, double _value)
+{
+    _attribute->setTargetValue(_value);
+    this->updateAttribute(_attribute);
+    _attribute->setCurrentValue(_value);
+    this->updateAttribute(_attribute);
 }
 
 String virtualHomee::gethomeeId()

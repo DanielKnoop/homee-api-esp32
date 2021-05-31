@@ -13,6 +13,7 @@
 #include <Arduino.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncWebSocket.h>
+#include <time.h>
 
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
@@ -40,6 +41,7 @@ public:
     void start();
     void addNode(node* n);
     void updateAttribute(nodeAttributes* _nodeAttribute);
+    void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
 
     virtualHomee();
     virtualHomee(String _homeeId);
