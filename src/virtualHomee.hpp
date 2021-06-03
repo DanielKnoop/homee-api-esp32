@@ -37,6 +37,7 @@ private:
     nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(String url, String parameterName);
     String gethomeeId();
+    void sendWSMessage(DynamicJsonDocument doc, AsyncWebSocketClient *client);
 public:
     void start();
     void addNode(node* n);
