@@ -27,7 +27,6 @@ class nodeAttributes
         String data = "";
         String name = "";
         uint32_t getTimestamp();
-        //tm tm;
     public:
         nodeAttributes(uint16_t _type);
         nodeAttributes(uint16_t _type, uint32_t _id);
