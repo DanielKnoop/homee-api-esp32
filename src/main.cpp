@@ -98,9 +98,6 @@ void loop() {
       newValue = na1->getMaximumValue();
     }
     vhih.updateAttributeValue(na1, newValue);
-    time_t now = time(&now);
-    Serial.print("Timestamp: ");
-    Serial.println((uint32_t) time(&now));
   }
 }
 #endif
