@@ -31,6 +31,8 @@ class nodeAttributes
         nodeAttributes(uint16_t _type);
         nodeAttributes(uint16_t _type, uint32_t _id);
         
+        void executeCallback();
+        
         void setId(uint32_t _id);
         uint32_t getId();
         void setNodeId(uint32_t _node_id);

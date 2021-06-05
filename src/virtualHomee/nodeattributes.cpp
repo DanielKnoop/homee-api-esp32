@@ -124,11 +124,6 @@ void nodeAttributes::setEditable(uint8_t _editable)
 void nodeAttributes::setTargetValue(double_t _targetValue)
 {
     this->target_value = _targetValue;
-
-    if(this->callback)
-    {
-        callback(this);
-    }
 }
 
 double_t nodeAttributes::getTargetValue()
@@ -149,4 +144,12 @@ void nodeAttributes::setData(String _data)
 void nodeAttributes::setCallback(callbackFunction _callback)
 {
     this->callback = _callback;
+}
+
+void nodeAttributes::executeCallback()
+{
+    if (this->callback)
+    {
+        callback(this);
+    }
 }

@@ -174,6 +174,7 @@ void virtualHomee::start()
                                if (changedNode != nullptr)
                                {
                                    changedNode->setTargetValue(targetValue);
+                                   changedNode->executeCallback();
                                }
 #ifdef DEBUG_VIRTUAL_HOMEE
                                else
