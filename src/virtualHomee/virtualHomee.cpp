@@ -35,19 +35,6 @@ DynamicJsonDocument virtualHomee::getSettings()
     doc["settings"]["b2b_partner"] = "homee";
     doc["settings"]["homee_name"] = this->homeeId;
     doc["settings"].createNestedArray("cubes");
-    /*
-    doc["settings"]["extensions"]["weather"]["enabled"] = 1;
-    doc["settings"]["extensions"]["amazon_alexa"]["enabled"] = 0;
-    doc["settings"]["extensions"]["google_assistant"]["enabled"] = 0;
-    doc["settings"]["extensions"]["google_assistant"]["syncing"] = 0;
-    doc["settings"]["extensions"]["apple_homekit"]["enabled"] = 0;
-    doc["settings"]["extensions"]["apple_homekit"]["paired"] = 0;
-    doc["settings"]["extensions"]["apple_homekit"]["config_number"] = 1;
-    doc["settings"]["extensions"]["apple_homekit"]["syncing"] = 0;
-    doc["settings"]["extensions"]["ftp"]["enabled"] = 0;
-    doc["settings"]["extensions"]["history"]["enabled"] = 0;
-    doc["settings"]["extensions"]["backup"]["enabled"] = 0;
-    */
     return doc;
 }
 
@@ -187,9 +174,6 @@ void virtualHomee::start()
                            {
                                if (message.indexOf("compatibility_check=1") >= 0)
                                {
-
-                                   //client->text("{ \"warning\": {\"code\":104,\"description\":\"A cube started the learn mode..\",\"message\":\"homee started the learn mode.\",\"data\":{}}}");
-
                                    DynamicJsonDocument doc(200);
                                    doc["compatibility_check"]["compatible"] = true;
                                    doc["compatibility_check"]["account"] = true;
@@ -202,28 +186,24 @@ void virtualHomee::start()
                                }
                                else if (message.indexOf("start_pairing=1") >= 0)
                                {
-                                   //client->text("{ \"warning\": {\"code\":104,\"description\":\"A cube started the learn mode..\",\"message\":\"homee started the learn mode.\",\"data\":{}}}");
-                                   //client->text("{\"user\":{\"id\":2,\"username\":\"External_Homee_Service_User\",\"forename\":\"\",\"surname\":\"\",\"image\":\"\",\"role\":5,\"type\":1,\"email\":\"\",\"phone\":\"\",\"added\":1622576848,\"homee_image\":\"\",\"access\":1,\"presence_detection\":false,\"cube_push_notifications\":0,\"cube_email_notifications\":0,\"cube_sms_notifications\":0,\"warning_push_notifications\":0,\"warning_email_notifications\":0,\"warning_sms_notifications\":0,\"node_push_notifications\":0,\"node_email_notifications\":0,\"node_sms_notifications\":0,\"update_push_notifications\":0,\"update_email_notifications\":0,\"update_sms_notifications\":0,\"homeegram_push_notifications\":0,\"homeegram_email_notifications\":0,\"homeegram_sms_notifications\":0,\"api_push_notifications\":0,\"api_email_notifications\":0,\"api_sms_notifications\":0,\"plan_push_notifications\":0,\"plan_email_notifications\":0,\"plan_sms_notifications\":0,\"devices\":[]}}");
-                                   //{"pairing":{"access_token":"FJ12BiCuy8ncDClmgOFoToInESHRaOGxltQ27haENM3kALawkOxtaRUhzxXpg6q4","expires":315360000,"userID":5,"deviceID":15}}
                                    DynamicJsonDocument doc(150);
                                    doc["pairing"]["access_token"] = this->access_token;
                                    doc["pairing"]["expires"] = 315360000;
-                                   doc["pairing"]["userID"] = 2;
-                                   doc["pairing"]["deviceID"] = 2;
+                                   doc["pairing"]["userID"] = 1;
+                                   doc["pairing"]["deviceID"] = 1;
 
                                    this->sendWSMessage(doc, client);
                                }
                            }
                            else if (message == "DELETE:users/1/devices/1")
                            {
-                               //client->text("{\"user\":{\"id\":1,\"username\":\"homee\",\"forename\":\"\",\"surname\":\"\",\"image\":\"\",\"role\":5,\"type\":1,\"email\":\"\",\"phone\":\"\",\"added\":1622576848,\"homee_image\":\"\",\"access\":1,\"presence_detection\":false,\"cube_push_notifications\":0,\"cube_email_notifications\":0,\"cube_sms_notifications\":0,\"warning_push_notifications\":0,\"warning_email_notifications\":0,\"warning_sms_notifications\":0,\"node_push_notifications\":0,\"node_email_notifications\":0,\"node_sms_notifications\":0,\"update_push_notifications\":0,\"update_email_notifications\":0,\"update_sms_notifications\":0,\"homeegram_push_notifications\":0,\"homeegram_email_notifications\":0,\"homeegram_sms_notifications\":0,\"api_push_notifications\":0,\"api_email_notifications\":0,\"api_sms_notifications\":0,\"plan_push_notifications\":0,\"plan_email_notifications\":0,\"plan_sms_notifications\":0,\"devices\":[]}}");
-
                                DynamicJsonDocument doc(150);
                                doc["warning"]["code"] = 600;
                                doc["warning"]["description"] = "Your device got removed.";
                                doc["warning"]["message"] = "You have been logged out.";
                                doc["warning"]["data"] = serialized("{}");
                                this->sendWSMessage(doc, client);
+                               client->close(4444, "DEVICE_DISCONNECT");
                            }
                        }
                    }
@@ -303,8 +283,8 @@ virtualHomee::virtualHomee()
     String mac = WiFi.macAddress();
     mac.replace(":", "");
     this->homeeId = mac;
-    //this->version = "2.25.0 (ed9c50)";
-    this->version = "2.33.0-rc.1+2a3ebfd2";
+    this->version = "2.25.0 (ed9c50)";
+    //this->version = "2.33.0-rc.1+2a3ebfd2";
     this->access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
     this->nds.AddNode(new node(-1, 1, "homee"));
 }
