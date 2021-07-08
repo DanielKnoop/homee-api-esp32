@@ -38,11 +38,16 @@ private:
     String getUrlParameterValue(String url, String parameterName);
     String gethomeeId();
     void sendWSMessage(DynamicJsonDocument doc, AsyncWebSocketClient *client);
+    size_t numberOfWSClients = 0;
+    void clientConnected();
+    void clientDisconnected();
 public:
     void start();
     void addNode(node* n);
     void updateAttribute(nodeAttributes* _nodeAttribute);
     void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
+
+    size_t getNumberOfWSClients();
 
     virtualHomee();
     virtualHomee(String _homeeId);

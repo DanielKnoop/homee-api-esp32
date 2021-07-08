@@ -108,6 +108,7 @@ void virtualHomee::start()
                {
                    if (type == WS_EVT_CONNECT)
                    {
+                       this->clientConnected();
 #ifdef DEBUG_VIRTUAL_HOMEE
                        Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
                        Serial.println(client->remoteIP());
@@ -115,6 +116,7 @@ void virtualHomee::start()
                    }
                    else if (type == WS_EVT_DISCONNECT)
                    {
+                       this->clientDisconnected();
 #ifdef DEBUG_VIRTUAL_HOMEE
                        Serial.printf("ws[%s] disconnect: %u\n", server->url(), client->id());
 #endif
@@ -268,6 +270,21 @@ void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _valu
 String virtualHomee::gethomeeId()
 {
     return this->homeeId;
+}
+
+void virtualHomee::clientConnected()
+{
+    this->numberOfWSClients++;
+}
+
+void virtualHomee::clientDisconnected()
+{
+    this->numberOfWSClients--;
+}
+
+size_t virtualHomee::getNumberOfWSClients()
+{
+    return this->numberOfWSClients;
 }
 
 virtualHomee::virtualHomee(String _homeeId)
