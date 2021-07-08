@@ -46,6 +46,7 @@ public:
     void addNode(node* n);
     void updateAttribute(nodeAttributes* _nodeAttribute);
     void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
+    void updateAttributeData(nodeAttributes* _nodeAttribute, String _data);
 
     size_t getNumberOfWSClients();
 

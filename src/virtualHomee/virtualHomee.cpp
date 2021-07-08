@@ -267,6 +267,12 @@ void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _valu
     this->updateAttribute(_attribute);
 }
 
+void virtualHomee::updateAttributeData(nodeAttributes* _attribute, String _data)
+{
+    _attribute->setData(_data);
+    this->updateAttribute(_attribute);
+}
+
 String virtualHomee::gethomeeId()
 {
     return this->homeeId;
