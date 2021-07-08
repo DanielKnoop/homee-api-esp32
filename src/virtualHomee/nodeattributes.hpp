@@ -51,6 +51,8 @@ class nodeAttributes
         void setTargetValue(double_t _targetValue);
         String getData();
         void setData(String _data);
+        void setStepValue(double_t _step_value);
+        double_t getStepValue();
         
         void setCallback(callbackFunction _callback);
         DynamicJsonDocument GetJSONArray();

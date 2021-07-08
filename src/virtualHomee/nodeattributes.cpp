@@ -146,6 +146,16 @@ void nodeAttributes::setCallback(callbackFunction _callback)
     this->callback = _callback;
 }
 
+double_t nodeAttributes::getStepValue()
+{
+    return this->step_value;
+}
+
+void nodeAttributes::setStepValue(double_t _step_value)
+{
+    this->step_value = _step_value;
+}
+
 void nodeAttributes::executeCallback()
 {
     if (this->callback)
