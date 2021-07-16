@@ -61,32 +61,32 @@ nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
 
 DynamicJsonDocument node::GetJSONObject()
 {
-    DynamicJsonDocument jo(this->size());
-    jo["id"] = this->id;
-    jo["name"] = this->name;
-    jo["profile"] = this->profile;
-    jo["image"] = this->image;
-    jo["favorite"] = this->favorite;
-    jo["order"] = this->order;
-    jo["protocol"] = this->protocol;
-    jo["routing"] = this->routing;
-    jo["state"] = this->state;
-    jo["state_changed"] = this->state_changed;
-    jo["added"] = this->added;
-    jo["history"] = this->history;
-    jo["cube_type"] = this->cube_type;
-    jo["note"] = this->note;
-    jo["services"] = this->services;
-    jo["phonetic_name"] = this->phonetic_name;
-    jo["owner"] = this->owner;
-    jo["security"] = this->security;
-    JsonArray attributes = jo.createNestedArray("attributes");
+    DynamicJsonDocument jsonDoc(this->size());
+    jsonDoc["id"] = this->id;
+    jsonDoc["name"] = this->name;
+    jsonDoc["profile"] = this->profile;
+    jsonDoc["image"] = this->image;
+    jsonDoc["favorite"] = this->favorite;
+    jsonDoc["order"] = this->order;
+    jsonDoc["protocol"] = this->protocol;
+    jsonDoc["routing"] = this->routing;
+    jsonDoc["state"] = this->state;
+    jsonDoc["state_changed"] = this->state_changed;
+    jsonDoc["added"] = this->added;
+    jsonDoc["history"] = this->history;
+    jsonDoc["cube_type"] = this->cube_type;
+    jsonDoc["note"] = this->note;
+    jsonDoc["services"] = this->services;
+    jsonDoc["phonetic_name"] = this->phonetic_name;
+    jsonDoc["owner"] = this->owner;
+    jsonDoc["security"] = this->security;
+    JsonArray attributes = jsonDoc.createNestedArray("attributes");
     for(int i = 0; i < this->numberOfAttributes; i++)
     {
         attributes.add(this->attributes[i]->GetJSONArray());
     }
 
-    return jo;
+    return jsonDoc;
 }
 
 String node::getImage() 
