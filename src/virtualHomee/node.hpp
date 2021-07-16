@@ -38,4 +38,6 @@ class node
         uint8_t GetNumberOfAttributes();
         nodeAttributes* GetAttribute(uint8_t n);
         size_t size();
+        void setImage(String _image);
+        String getImage();
 };

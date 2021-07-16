@@ -88,3 +88,13 @@ DynamicJsonDocument node::GetJSONObject()
 
     return jo;
 }
+
+String node::getImage() 
+{
+    return this->image;
+}
+
+void node::setImage(String _image)
+{
+    this->image = _image;
+}
