@@ -33,7 +33,7 @@ private:
     nodes nds;
 
     DynamicJsonDocument getSettings();
-    void startDiscovery();
+    void startDiscoveryService();
     nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(String url, String parameterName);
     String gethomeeId();
@@ -41,6 +41,10 @@ private:
     size_t numberOfWSClients = 0;
     void clientConnected();
     void clientDisconnected();
+    void initializeWebServer();
+    void initializeWebsocketServer();
+    static void handleHttpPostRequest(virtualHomee* context, AsyncWebServerRequest *request);
+    static void handleHttpOptionsAccessToken(AsyncWebServerRequest *request);
 public:
     void start();
     void addNode(node* n);

@@ -2,40 +2,40 @@
 
 DynamicJsonDocument virtualHomee::getSettings()
 {
-    DynamicJsonDocument doc(2000);
-    doc["settings"]["address"] = "";
-    doc["settings"]["city"] = "";
-    doc["settings"]["zip"] = 11111;
-    doc["settings"]["state"] = "BW";
-    doc["settings"]["latitude"] = "";
-    doc["settings"]["longitude"] = "";
-    doc["settings"]["country"] = "Germany";
-    doc["settings"]["language"] = "de";
-    doc["settings"]["wlan_dhcp"] = 1;
-    doc["settings"]["remote_access"] = 1;
-    doc["settings"]["beta"] = 0;
-    doc["settings"]["webhooks_key"] = "WEBHOOKKEY";
-    doc["settings"]["automatic_location_detection"] = 0;
-    doc["settings"]["polling_interval"] = 60;
-    doc["settings"]["timezone"] = "Europe%2FBerlin";
-    doc["settings"]["enable_analytics"] = 0;
-    doc["settings"]["wlan_enabled"] = 1;
-    doc["settings"]["wlan_ip_address"] = "192.168.178.222";
-    doc["settings"]["wlan_ssid"] = "homeeWifi";
-    doc["settings"]["wlan_mode"] = 2;
-    doc["settings"]["online"] = 0;
-    doc["settings"]["lan_enabled"] = 1;
-    doc["settings"].createNestedArray("available_ssids").add("homeeWifi");
-    doc["settings"]["time"] = 1562707105;
-    doc["settings"]["civil_time"] = "2019-07-09 23:18:25";
-    doc["settings"]["version"] = this->version;
-    doc["settings"]["uid"] = this->homeeId;
-    doc["settings"]["gateway_id"] = 1313337;
-    doc["settings"]["local_ssl_enabled"] = false;
-    doc["settings"]["b2b_partner"] = "homee";
-    doc["settings"]["homee_name"] = this->homeeId;
-    doc["settings"].createNestedArray("cubes");
-    return doc;
+    DynamicJsonDocument jsonDoc(2000);
+    jsonDoc["settings"]["address"] = "";
+    jsonDoc["settings"]["city"] = "";
+    jsonDoc["settings"]["zip"] = 11111;
+    jsonDoc["settings"]["state"] = "BW";
+    jsonDoc["settings"]["latitude"] = "";
+    jsonDoc["settings"]["longitude"] = "";
+    jsonDoc["settings"]["country"] = "Germany";
+    jsonDoc["settings"]["language"] = "de";
+    jsonDoc["settings"]["wlan_dhcp"] = 1;
+    jsonDoc["settings"]["remote_access"] = 1;
+    jsonDoc["settings"]["beta"] = 0;
+    jsonDoc["settings"]["webhooks_key"] = "WEBHOOKKEY";
+    jsonDoc["settings"]["automatic_location_detection"] = 0;
+    jsonDoc["settings"]["polling_interval"] = 60;
+    jsonDoc["settings"]["timezone"] = "Europe%2FBerlin";
+    jsonDoc["settings"]["enable_analytics"] = 0;
+    jsonDoc["settings"]["wlan_enabled"] = 1;
+    jsonDoc["settings"]["wlan_ip_address"] = "192.168.178.222";
+    jsonDoc["settings"]["wlan_ssid"] = "homeeWifi";
+    jsonDoc["settings"]["wlan_mode"] = 2;
+    jsonDoc["settings"]["online"] = 0;
+    jsonDoc["settings"]["lan_enabled"] = 1;
+    jsonDoc["settings"].createNestedArray("available_ssids").add("homeeWifi");
+    jsonDoc["settings"]["time"] = 1562707105;
+    jsonDoc["settings"]["civil_time"] = "2019-07-09 23:18:25";
+    jsonDoc["settings"]["version"] = this->version;
+    jsonDoc["settings"]["uid"] = this->homeeId;
+    jsonDoc["settings"]["gateway_id"] = 1313337;
+    jsonDoc["settings"]["local_ssl_enabled"] = false;
+    jsonDoc["settings"]["b2b_partner"] = "homee";
+    jsonDoc["settings"]["homee_name"] = this->homeeId;
+    jsonDoc["settings"].createNestedArray("cubes");
+    return jsonDoc;
 }
 
 void virtualHomee::addNode(node *n)
@@ -84,158 +84,168 @@ String virtualHomee::getUrlParameterValue(String url, String parameterName)
     }
 }
 
-void virtualHomee::start()
+void virtualHomee::handleHttpOptionsAccessToken(AsyncWebServerRequest *request)
 {
-    server.on("/access_token", HTTP_OPTIONS, [](AsyncWebServerRequest *request)
-              {
-                  AsyncWebServerResponse *response = request->beginResponse(204);
-                  response->addHeader("access-control-allow-methods", "POST, DELETE");
-                  response->addHeader("access-control-allow-origin", "*");
-                  request->send(response);
-              });
+    AsyncWebServerResponse *response = request->beginResponse(204);
+    response->addHeader("access-control-allow-methods", "POST, DELETE");
+    response->addHeader("access-control-allow-origin", "*");
+    request->send(response);
+}
 
-    server.on("/access_token", HTTP_DELETE, [](AsyncWebServerRequest *request) {
+void virtualHomee::handleHttpPostRequest(virtualHomee* context, AsyncWebServerRequest *request)
+{
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/x-www-form-urlencoded", "access_token=" + context->access_token + "&user_id=1&device_id=1&expires=31536000");
+    response->addHeader("set-cookie", "access_token=" + context->access_token + ";Max-Age=2592000;");
+    request->send(response);
+}
 
+void virtualHomee::initializeWebServer()
+{
+    server.on("/access_token", HTTP_OPTIONS, handleHttpOptionsAccessToken);
+    server.on("/access_token", HTTP_DELETE, [](AsyncWebServerRequest *request) {});
+    server.on("/access_token", HTTP_POST, [this](AsyncWebServerRequest *request){handleHttpPostRequest(this, request);});
+}
+void virtualHomee::initializeWebsocketServer()
+{
+    ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+    {
+        if (type == WS_EVT_CONNECT)
+        {
+            this->clientConnected();
+#ifdef DEBUG_VIRTUAL_HOMEE
+            Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
+            Serial.println(client->remoteIP());
+#endif
+        }
+        else if (type == WS_EVT_DISCONNECT)
+        {
+            this->clientDisconnected();
+#ifdef DEBUG_VIRTUAL_HOMEE
+            Serial.printf("ws[%s] disconnect: %u\n", server->url(), client->id());
+#endif
+        }
+        else if (type == WS_EVT_PONG)
+        {
+#ifdef DEBUG_VIRTUAL_HOMEE
+            Serial.println("PONG");
+#endif
+        }
+        else if (type == WS_EVT_DATA)
+        {
+            AwsFrameInfo *info = (AwsFrameInfo *)arg;
+            if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
+            {
+                data[len] = 0;
+                String message = (char *)data;
+#ifdef DEBUG_VIRTUAL_HOMEE
+                Serial.print("DEBUG: Received Message: ");
+                Serial.println(message);
+#endif
+                if (message.equalsIgnoreCase("GET:Settings"))
+                {
+                    DynamicJsonDocument doc = this->getSettings();
+                    this->sendWSMessage(doc, client);
+                }
+                else if (message.equalsIgnoreCase("GET:nodes"))
+                {
+                    DynamicJsonDocument doc = nds.GetJSONArray();
+                    this->sendWSMessage(doc, client);
+                }
+                else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
+                {
+                    int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
+                    double_t targetValue = atof(this->getUrlParameterValue(message, "target_value").c_str());
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("Attribute ID: ");
+                    Serial.println(attributeId);
+
+                    Serial.print("Target Value: ");
+                    Serial.println(targetValue);
+#endif
+                    nodeAttributes *changedNode = this->getAttributeWithId(attributeId);
+                    if (changedNode != nullptr)
+                    {
+                        changedNode->setTargetValue(targetValue);
+                        changedNode->executeCallback();
+                    }
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    else
+                    {
+                        Serial.println("Achtung: Node nicht gefunden");
+                    }
+#endif
+                }
+                else if (message.substring(0, 10).equalsIgnoreCase("POST:nodes")) //"POST:nodes?protocol=21&compatibility_check=1&my_version=2.32.0+eb5e9b1a
+                {
+                    if (message.indexOf("compatibility_check=1") >= 0)
+                    {
+                        DynamicJsonDocument jsonDoc(200);
+                        jsonDoc["compatibility_check"]["compatible"] = true;
+                        jsonDoc["compatibility_check"]["account"] = true;
+                        jsonDoc["compatibility_check"]["external_homee_status"] = "none";
+                        jsonDoc["compatibility_check"]["your_version"] = true;
+                        jsonDoc["compatibility_check"]["my_version"] = this->version;
+                        jsonDoc["compatibility_check"]["my_homeeID"] = this->homeeId;
+
+                        this->sendWSMessage(jsonDoc, client);
+                    }
+                    else if (message.indexOf("start_pairing=1") >= 0)
+                    {
+                        DynamicJsonDocument jsonDoc(150);
+                        jsonDoc["pairing"]["access_token"] = this->access_token;
+                        jsonDoc["pairing"]["expires"] = 315360000;
+                        jsonDoc["pairing"]["userID"] = 1;
+                        jsonDoc["pairing"]["deviceID"] = 1;
+
+                        this->sendWSMessage(jsonDoc, client);
+                    }
+                }
+                else if (message == "DELETE:users/1/devices/1")
+                {
+                    DynamicJsonDocument jsonDoc(150);
+                    jsonDoc["warning"]["code"] = 600;
+                    jsonDoc["warning"]["description"] = "Your device got removed.";
+                    jsonDoc["warning"]["message"] = "You have been logged out.";
+                    jsonDoc["warning"]["data"] = serialized("{}");
+                    this->sendWSMessage(jsonDoc, client);
+                    client->close(4444, "DEVICE_DISCONNECT");
+                }
+            }
+        }
+        ws.cleanupClients();
     });
 
-    server.on("/access_token", HTTP_POST, [this](AsyncWebServerRequest *request)
-              {
-                  AsyncWebServerResponse *response = request->beginResponse(200, "application/x-www-form-urlencoded", "access_token=" + this->access_token + "&user_id=1&device_id=1&expires=31536000");
-                  response->addHeader("set-cookie", "access_token=" + this->access_token + ";Max-Age=2592000;");
-                  request->send(response);
-              });
-    ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
-               {
-                   if (type == WS_EVT_CONNECT)
-                   {
-                       this->clientConnected();
-#ifdef DEBUG_VIRTUAL_HOMEE
-                       Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
-                       Serial.println(client->remoteIP());
-#endif
-                   }
-                   else if (type == WS_EVT_DISCONNECT)
-                   {
-                       this->clientDisconnected();
-#ifdef DEBUG_VIRTUAL_HOMEE
-                       Serial.printf("ws[%s] disconnect: %u\n", server->url(), client->id());
-#endif
-                   }
-                   else if (type == WS_EVT_PONG)
-                   {
-#ifdef DEBUG_VIRTUAL_HOMEE
-                       Serial.println("PONG");
-#endif
-                   }
-                   else if (type == WS_EVT_DATA)
-                   {
-                       AwsFrameInfo *info = (AwsFrameInfo *)arg;
-                       if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
-                       {
-                           data[len] = 0;
-                           String message = (char *)data;
-#ifdef DEBUG_VIRTUAL_HOMEE
-                           Serial.print("DEBUG: Received Message: ");
-                           Serial.println(message);
-#endif
-                           if (message.equalsIgnoreCase("GET:Settings"))
-                           {
-                               DynamicJsonDocument doc = this->getSettings();
-                               this->sendWSMessage(doc, client);
-                           }
-                           else if (message.equalsIgnoreCase("GET:nodes"))
-                           {
-                               DynamicJsonDocument doc = nds.GetJSONArray();
-                               this->sendWSMessage(doc, client);
-                           }
-                           else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
-                           {
-                               int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
-                               double_t targetValue = atof(this->getUrlParameterValue(message, "target_value").c_str());
-#ifdef DEBUG_VIRTUAL_HOMEE
-                               Serial.print("Attribute ID: ");
-                               Serial.println(attributeId);
+}
 
-                               Serial.print("Target Value: ");
-                               Serial.println(targetValue);
-#endif
-                               nodeAttributes *changedNode = this->getAttributeWithId(attributeId);
-                               if (changedNode != nullptr)
-                               {
-                                   changedNode->setTargetValue(targetValue);
-                                   changedNode->executeCallback();
-                               }
-#ifdef DEBUG_VIRTUAL_HOMEE
-                               else
-                               {
-                                   Serial.println("Achtung: Node nicht gefunden");
-                               }
-#endif
-                           }
-                           else if (message.substring(0, 10).equalsIgnoreCase("POST:nodes")) //"POST:nodes?protocol=21&compatibility_check=1&my_version=2.32.0+eb5e9b1a
-                           {
-                               if (message.indexOf("compatibility_check=1") >= 0)
-                               {
-                                   DynamicJsonDocument doc(200);
-                                   doc["compatibility_check"]["compatible"] = true;
-                                   doc["compatibility_check"]["account"] = true;
-                                   doc["compatibility_check"]["external_homee_status"] = "none";
-                                   doc["compatibility_check"]["your_version"] = true;
-                                   doc["compatibility_check"]["my_version"] = this->version;
-                                   doc["compatibility_check"]["my_homeeID"] = this->homeeId;
-
-                                   this->sendWSMessage(doc, client);
-                               }
-                               else if (message.indexOf("start_pairing=1") >= 0)
-                               {
-                                   DynamicJsonDocument doc(150);
-                                   doc["pairing"]["access_token"] = this->access_token;
-                                   doc["pairing"]["expires"] = 315360000;
-                                   doc["pairing"]["userID"] = 1;
-                                   doc["pairing"]["deviceID"] = 1;
-
-                                   this->sendWSMessage(doc, client);
-                               }
-                           }
-                           else if (message == "DELETE:users/1/devices/1")
-                           {
-                               DynamicJsonDocument doc(150);
-                               doc["warning"]["code"] = 600;
-                               doc["warning"]["description"] = "Your device got removed.";
-                               doc["warning"]["message"] = "You have been logged out.";
-                               doc["warning"]["data"] = serialized("{}");
-                               this->sendWSMessage(doc, client);
-                               client->close(4444, "DEVICE_DISCONNECT");
-                           }
-                       }
-                   }
-                   ws.cleanupClients();
-               });
+void virtualHomee::start()
+{
+    initializeWebServer();
+    initializeWebsocketServer();
 
     server.addHandler(&ws);
     server.begin();
-    this->startDiscovery();
+    this->startDiscoveryService();
 }
 
-void virtualHomee::sendWSMessage(DynamicJsonDocument doc, AsyncWebSocketClient *client)
+void virtualHomee::sendWSMessage(DynamicJsonDocument jsonDoc, AsyncWebSocketClient *client)
 {
-    size_t len = measureJson(doc);
+    size_t len = measureJson(jsonDoc);
     AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(len);
     if (buffer)
     {
-        serializeJson(doc, (char *)buffer->get(), len + 1);
+        serializeJson(jsonDoc, (char *)buffer->get(), len + 1);
         client->text(buffer);
     }
 
 #ifdef DEBUG_VIRTUAL_HOMEE
     Serial.print("DEBUG: Send Message: ");
     Serial.println(len);
-    serializeJsonPretty(doc, Serial);
+    serializeJsonPretty(jsonDoc, Serial);
     Serial.println();
 #endif
 }
 
-void virtualHomee::startDiscovery()
+void virtualHomee::startDiscoveryService()
 {
     if (udp.listen(15263))
     {
@@ -244,18 +254,18 @@ void virtualHomee::startDiscovery()
         Serial.println(WiFi.localIP());
 #endif
         udp.onPacket([this](AsyncUDPPacket packet)
-                     {
-                         String message = packet.readString();
+        {
+            String message = packet.readString();
 #ifdef DEBUG_VIRTUAL_HOMEE
-                         Serial.print("UDP Message reveived: ");
-                         Serial.println(message);
+            Serial.print("UDP Message reveived: ");
+            Serial.println(message);
 #endif
 
-                         if (message.equalsIgnoreCase(this->gethomeeId()))
-                         {
-                             packet.printf("initialized:%s:%s:homee", this->gethomeeId().c_str(), this->gethomeeId().c_str());
-                         }
-                     });
+            if (message.equalsIgnoreCase(this->gethomeeId()))
+            {
+                packet.printf("initialized:%s:%s:homee", this->gethomeeId().c_str(), this->gethomeeId().c_str());
+            }
+        });
     }
 }
 
@@ -307,7 +317,6 @@ virtualHomee::virtualHomee()
     mac.replace(":", "");
     this->homeeId = mac;
     this->version = "2.25.0 (ed9c50)";
-    //this->version = "2.33.0-rc.1+2a3ebfd2";
     this->access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
     this->nds.AddNode(new node(-1, 1, "homee"));
 }
