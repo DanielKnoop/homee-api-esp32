@@ -38,6 +38,7 @@ private:
     String getUrlParameterValue(String url, String parameterName);
     String gethomeeId();
     void sendWSMessage(DynamicJsonDocument doc, AsyncWebSocketClient *client);
+    void sendWSMessage2(DynamicJsonDocument doc, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
     void clientConnected();
     void clientDisconnected();
