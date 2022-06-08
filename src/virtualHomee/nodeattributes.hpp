@@ -55,6 +55,6 @@ class nodeAttributes
         double_t getStepValue();
         
         void setCallback(callbackFunction _callback);
-        DynamicJsonDocument GetJSONArray();
+        void GetJSONArray(JsonArray jsonArray);
         size_t size();
 };

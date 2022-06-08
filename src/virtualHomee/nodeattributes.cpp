@@ -1,8 +1,8 @@
 #include "nodeattributes.hpp"
 
-DynamicJsonDocument nodeAttributes::GetJSONArray()
+void nodeAttributes::GetJSONArray(JsonArray jsonArray)
 {
-    DynamicJsonDocument doc(this->size());
+    JsonVariant doc = jsonArray.createNestedObject();
 
     doc["id"] = this->id;
     doc["node_id"] = this->node_id;
@@ -23,8 +23,6 @@ DynamicJsonDocument nodeAttributes::GetJSONArray()
     doc["based_on"] = this->based_on;
     doc["data"] = this->data;
     doc["name"] = this->name;
-
-    return doc;
 }
 
 double_t nodeAttributes::getMinimumValue()

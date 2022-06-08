@@ -1,8 +1,8 @@
 #include "virtualHomee.hpp"
 
-DynamicJsonDocument virtualHomee::getSettings()
+void virtualHomee::getSettings(JsonObject jsonDoc)
 {
-    DynamicJsonDocument jsonDoc(2000);
+    //DynamicJsonDocument jsonDoc(2000);
     jsonDoc["settings"]["address"] = "";
     jsonDoc["settings"]["city"] = "";
     jsonDoc["settings"]["zip"] = 11111;
@@ -35,7 +35,7 @@ DynamicJsonDocument virtualHomee::getSettings()
     jsonDoc["settings"]["b2b_partner"] = "homee";
     jsonDoc["settings"]["homee_name"] = this->homeeId;
     jsonDoc["settings"].createNestedArray("cubes");
-    return jsonDoc;
+    //return jsonDoc;
 }
 
 void virtualHomee::addNode(node *n)
@@ -62,7 +62,8 @@ void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
 {
     ws.cleanupClients();
     DynamicJsonDocument doc(400);
-    doc["attribute"] = _nodeAttribute->GetJSONArray();
+    JsonArray attribute = doc.createNestedArray("attribute");
+    _nodeAttribute->GetJSONArray(attribute);
     size_t len = measureJson(doc);
     AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(len);
     serializeJson(doc, buffer->get(), len + 1);
@@ -142,14 +143,25 @@ void virtualHomee::initializeWebsocketServer()
                 Serial.println(message);
 #endif
                 if (message.equalsIgnoreCase("GET:Settings"))
-                {
-                    DynamicJsonDocument doc = this->getSettings();
-                    this->sendWSMessage(doc, client);
+                {                 
+                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer();
+                    JsonVariant doc = jsonBuffer->getRoot();
+                    this->getSettings(doc);
+
+                    this->sendWSMessage(jsonBuffer, client);
+                    
                 }
                 else if (message.equalsIgnoreCase("GET:nodes"))
                 {
-                    DynamicJsonDocument doc = nds.GetJSONArray();
-                    this->sendWSMessage(doc, client);
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("DEBUG: Reserve Json Buffer Size: ");
+                    Serial.println(nds.size() + 16);
+#endif   
+                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size());
+                    JsonVariant doc = jsonBuffer->getRoot();
+
+                    nds.GetJSONArray(doc.createNestedArray("nodes"));
+                    this->sendWSMessage(jsonBuffer, client);
                 }
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {
@@ -179,7 +191,8 @@ void virtualHomee::initializeWebsocketServer()
                 {
                     if (message.indexOf("compatibility_check=1") >= 0)
                     {
-                        DynamicJsonDocument jsonDoc(200);
+                        AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 200);
+                        JsonVariant jsonDoc = jsonBuffer->getRoot();
                         jsonDoc["compatibility_check"]["compatible"] = true;
                         jsonDoc["compatibility_check"]["account"] = true;
                         jsonDoc["compatibility_check"]["external_homee_status"] = "none";
@@ -187,27 +200,29 @@ void virtualHomee::initializeWebsocketServer()
                         jsonDoc["compatibility_check"]["my_version"] = this->version;
                         jsonDoc["compatibility_check"]["my_homeeID"] = this->homeeId;
 
-                        this->sendWSMessage(jsonDoc, client);
+                        this->sendWSMessage(jsonBuffer, client);
                     }
                     else if (message.indexOf("start_pairing=1") >= 0)
                     {
-                        DynamicJsonDocument jsonDoc(150);
+                        AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 200);
+                        JsonVariant jsonDoc = jsonBuffer->getRoot();
                         jsonDoc["pairing"]["access_token"] = this->access_token;
                         jsonDoc["pairing"]["expires"] = 315360000;
                         jsonDoc["pairing"]["userID"] = 1;
                         jsonDoc["pairing"]["deviceID"] = 1;
 
-                        this->sendWSMessage(jsonDoc, client);
+                        this->sendWSMessage(jsonBuffer, client);
                     }
                 }
                 else if (message == "DELETE:users/1/devices/1")
                 {
-                    DynamicJsonDocument jsonDoc(150);
+                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 150);
+                    JsonVariant jsonDoc = jsonBuffer->getRoot();
                     jsonDoc["warning"]["code"] = 600;
                     jsonDoc["warning"]["description"] = "Your device got removed.";
                     jsonDoc["warning"]["message"] = "You have been logged out.";
                     jsonDoc["warning"]["data"] = serialized("{}");
-                    this->sendWSMessage(jsonDoc, client);
+                    this->sendWSMessage(jsonBuffer, client);
                     client->close(4444, "DEVICE_DISCONNECT");
                 }
             }
@@ -227,22 +242,16 @@ void virtualHomee::start()
     this->startDiscoveryService();
 }
 
-void virtualHomee::sendWSMessage(DynamicJsonDocument jsonDoc, AsyncWebSocketClient *client)
-{
-    size_t len = measureJson(jsonDoc);
-    AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(len);
-    if (buffer)
-    {
-        serializeJson(jsonDoc, (char *)buffer->get(), len + 1);
-        client->text(buffer);
-    }
-
+void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client)
+{ 
 #ifdef DEBUG_VIRTUAL_HOMEE
     Serial.print("DEBUG: Send Message: ");
-    Serial.println(len);
-    serializeJsonPretty(jsonDoc, Serial);
+    Serial.println(measureJson(jsonBuffer->getRoot()));
+    serializeJsonPretty(jsonBuffer->getRoot(), Serial);
     Serial.println();
 #endif
+    jsonBuffer->setLength();
+    client->text(jsonBuffer);
 }
 
 void virtualHomee::startDiscoveryService()

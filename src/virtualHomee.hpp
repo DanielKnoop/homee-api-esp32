@@ -32,13 +32,12 @@ private:
 
     nodes nds;
 
-    DynamicJsonDocument getSettings();
+    void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
     nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(String url, String parameterName);
     String gethomeeId();
-    void sendWSMessage(DynamicJsonDocument doc, AsyncWebSocketClient *client);
-    void sendWSMessage2(DynamicJsonDocument doc, AsyncWebSocketClient *client);
+    void sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
     void clientConnected();
     void clientDisconnected();

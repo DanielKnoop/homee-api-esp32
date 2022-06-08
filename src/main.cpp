@@ -24,7 +24,7 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;
 const int   daylightOffset_sec = 3600;
 
-virtualHomee vhih("esp10");
+virtualHomee vhih("esp1");
 
 nodeAttributes* na1;
 nodeAttributes* na2;
@@ -249,11 +249,11 @@ void setup() {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 
-u_long lastMillis = 0;
-u_long duration = 30000;
+u_int64_t lastMillis = 0;
+u_int64_t duration = 30000;
 
 void loop() {
-  u_long currentMillis = millis();
+  u_int64_t currentMillis = millis();
   if(lastMillis + duration < currentMillis)
   {
     lastMillis = currentMillis;

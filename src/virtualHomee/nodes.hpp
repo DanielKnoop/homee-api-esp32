@@ -12,7 +12,7 @@ class nodes
         void AddNode(node* n);
         uint8_t GetNumberOfNodes();
         node* GetNode(uint8_t n);
-        DynamicJsonDocument GetJSONArray();
+        void GetJSONArray(JsonArray jsonDocument);
         size_t size();
         nodes();
 };

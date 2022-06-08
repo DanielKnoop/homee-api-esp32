@@ -2,7 +2,7 @@
 
 size_t node::size()
 {
-    size_t s = 350 + this->name.length() + this->phonetic_name.length() 
+    size_t s = 325 + this->name.length() + this->phonetic_name.length() 
         + this->image.length() + this->note.length() ;
     for(uint8_t i = 0; i < this->GetNumberOfAttributes(); i++)
     {
@@ -59,9 +59,10 @@ nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
     return attributes;
 }
 
-DynamicJsonDocument node::GetJSONObject()
+void node::AddJSONObject(JsonArray jsonArray)
 {
-    DynamicJsonDocument jsonDoc(this->size());
+    JsonVariant jsonDoc = jsonArray.addElement();
+
     jsonDoc["id"] = this->id;
     jsonDoc["name"] = this->name;
     jsonDoc["profile"] = this->profile;
@@ -83,10 +84,8 @@ DynamicJsonDocument node::GetJSONObject()
     JsonArray attributes = jsonDoc.createNestedArray("attributes");
     for(int i = 0; i < this->numberOfAttributes; i++)
     {
-        attributes.add(this->attributes[i]->GetJSONArray());
-    }
-
-    return jsonDoc;
+        this->attributes[i]->GetJSONArray(attributes);
+    }    
 }
 
 String node::getImage() 
