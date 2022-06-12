@@ -24,7 +24,7 @@ class virtualHomee
 private:
     String homeeId;
     String version;
-    String access_token;
+    const char* access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
 
     AsyncWebServer server;
     AsyncWebSocket ws;

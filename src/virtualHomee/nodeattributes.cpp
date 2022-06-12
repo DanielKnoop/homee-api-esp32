@@ -1,8 +1,8 @@
 #include "nodeattributes.hpp"
 
-void nodeAttributes::GetJSONArray(JsonArray jsonArray)
+void nodeAttributes::GetJSONObject(JsonObject doc)
 {
-    JsonVariant doc = jsonArray.createNestedObject();
+    //JsonVariant doc = jsonArray.createNestedObject("attribute");
 
     doc["id"] = this->id;
     doc["node_id"] = this->node_id;

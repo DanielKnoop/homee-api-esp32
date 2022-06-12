@@ -2,7 +2,6 @@
 
 void virtualHomee::getSettings(JsonObject jsonDoc)
 {
-    //DynamicJsonDocument jsonDoc(2000);
     jsonDoc["settings"]["address"] = "";
     jsonDoc["settings"]["city"] = "";
     jsonDoc["settings"]["zip"] = 11111;
@@ -35,7 +34,7 @@ void virtualHomee::getSettings(JsonObject jsonDoc)
     jsonDoc["settings"]["b2b_partner"] = "homee";
     jsonDoc["settings"]["homee_name"] = this->homeeId;
     jsonDoc["settings"].createNestedArray("cubes");
-    //return jsonDoc;
+
 }
 
 void virtualHomee::addNode(node *n)
@@ -61,12 +60,12 @@ nodeAttributes *virtualHomee::getAttributeWithId(uint32_t id)
 void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
 {
     ws.cleanupClients();
-    DynamicJsonDocument doc(400);
-    JsonArray attribute = doc.createNestedArray("attribute");
-    _nodeAttribute->GetJSONArray(attribute);
-    size_t len = measureJson(doc);
-    AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(len);
-    serializeJson(doc, buffer->get(), len + 1);
+    AsyncWebSocketJsonBuffer* buffer = ws.makeJsonBuffer(false, _nodeAttribute->size());
+    JsonVariant doc = buffer->getRoot();
+    JsonObject attribute = doc.createNestedObject("attribute");
+    //JsonArray attribute = doc.createNestedArray("attribute");
+    _nodeAttribute->GetJSONObject(attribute);
+    buffer->setLength();
     ws.textAll(buffer);
 }
 
@@ -94,9 +93,15 @@ void virtualHomee::handleHttpOptionsAccessToken(AsyncWebServerRequest *request)
 }
 
 void virtualHomee::handleHttpPostRequest(virtualHomee* context, AsyncWebServerRequest *request)
-{
-    AsyncWebServerResponse *response = request->beginResponse(200, "application/x-www-form-urlencoded", "access_token=" + context->access_token + "&user_id=1&device_id=1&expires=31536000");
-    response->addHeader("set-cookie", "access_token=" + context->access_token + ";Max-Age=2592000;");
+{ 
+    char _buff[128];
+
+    sprintf_P(_buff, PSTR("access_token=%s&user_id=1&device_id=1&expires=31536000"), context->access_token);
+    AsyncWebServerResponse *response = request->beginResponse(200, "application/x-www-form-urlencoded", _buff);
+
+    sprintf_P(_buff, PSTR("access_token=%s;Max-Age=2592000;"), context->access_token);
+    response->addHeader("set-cookie", _buff);
+
     request->send(response);
 }
 
@@ -219,8 +224,8 @@ void virtualHomee::initializeWebsocketServer()
                     AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 150);
                     JsonVariant jsonDoc = jsonBuffer->getRoot();
                     jsonDoc["warning"]["code"] = 600;
-                    jsonDoc["warning"]["description"] = "Your device got removed.";
-                    jsonDoc["warning"]["message"] = "You have been logged out.";
+                    jsonDoc["warning"]["description"] = F("Your device got removed.");
+                    jsonDoc["warning"]["message"] = F("You have been logged out.");
                     jsonDoc["warning"]["data"] = serialized("{}");
                     this->sendWSMessage(jsonBuffer, client);
                     client->close(4444, "DEVICE_DISCONNECT");
@@ -247,7 +252,7 @@ void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWeb
 #ifdef DEBUG_VIRTUAL_HOMEE
     Serial.print("DEBUG: Send Message: ");
     Serial.println(measureJson(jsonBuffer->getRoot()));
-    serializeJsonPretty(jsonBuffer->getRoot(), Serial);
+    //serializeJsonPretty(jsonBuffer->getRoot(), Serial);
     Serial.println();
 #endif
     jsonBuffer->setLength();
@@ -326,7 +331,6 @@ virtualHomee::virtualHomee()
     mac.replace(":", "");
     this->homeeId = mac;
     this->version = "2.25.0 (ed9c50)";
-    this->access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
     this->nds.AddNode(new node(-1, 1, "homee"));
 }
 

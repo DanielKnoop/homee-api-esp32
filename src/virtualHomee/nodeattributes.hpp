@@ -55,6 +55,6 @@ class nodeAttributes
         double_t getStepValue();
         
         void setCallback(callbackFunction _callback);
-        void GetJSONArray(JsonArray jsonArray);
+        void GetJSONObject(JsonObject doc);
         size_t size();
 };

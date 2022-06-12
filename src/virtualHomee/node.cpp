@@ -84,7 +84,8 @@ void node::AddJSONObject(JsonArray jsonArray)
     JsonArray attributes = jsonDoc.createNestedArray("attributes");
     for(int i = 0; i < this->numberOfAttributes; i++)
     {
-        this->attributes[i]->GetJSONArray(attributes);
+        JsonObject attribute = attributes.createNestedObject();
+        this->attributes[i]->GetJSONObject(attribute);
     }    
 }
 
