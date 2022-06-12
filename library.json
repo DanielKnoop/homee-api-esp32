@@ -1,6 +1,6 @@
 {
     "name": "homee-api-esp32",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "description": "A \"Hello world\" program is a computer program that outputs \"Hello World\" (or some variant) on a display device",
     "keywords": "homee, vhih, virtual homee",
     "build":
@@ -26,7 +26,7 @@
     "dependencies": 
     {
       "bblanchon/ArduinoJson":"^6.17.3",
-      "ESPAsyncWebServer": "https://github.com/lorol/ESPAsyncWebServer.git",
+      "ESPAsyncWebServer": "https://github.com/DanielKnoop/ESPAsyncWebServer.git#1.2.7",
       "ESPAsyncUDP": "https://github.com/DanielKnoop/ESPAsyncUDP.git"
     },
     "frameworks": "arduino",

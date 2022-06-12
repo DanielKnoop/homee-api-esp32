@@ -17,15 +17,12 @@ void nodes::AddNode(node* n_1)
     n[this->numberOfNodes++] = n_1;
 }
 
-DynamicJsonDocument nodes::GetJSONArray()
+void nodes::GetJSONArray(JsonArray jsonDocument)
 {
-    DynamicJsonDocument ja(this->size());
-    JsonArray nestedArray = ja.createNestedArray("nodes");
     for(int i = 0; i < this->numberOfNodes; i++)
     {
-        nestedArray.add(n[i]->GetJSONObject());
-    }
-    return ja;
+        n[i]->AddJSONObject(jsonDocument);
+    }    
 }
 
 node* nodes::GetNode(uint8_t n)

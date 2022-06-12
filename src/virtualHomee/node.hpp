@@ -34,7 +34,7 @@ class node
     public:
         node(uint32_t id, uint32_t profile, String name);
         nodeAttributes* AddAttributes(nodeAttributes* attributes);
-        DynamicJsonDocument GetJSONObject();
+        void AddJSONObject(JsonArray jsonArray);
         uint8_t GetNumberOfAttributes();
         nodeAttributes* GetAttribute(uint8_t n);
         size_t size();
