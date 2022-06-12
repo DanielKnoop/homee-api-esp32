@@ -24,11 +24,22 @@
     "license": "MIT",
     "homepage": "https://github.com/DanielKnoop/homee-api-esp32",
     "dependencies": 
-    {
-      "bblanchon/ArduinoJson":"^6.17.3",
-      "ESPAsyncWebServer": "https://github.com/DanielKnoop/ESPAsyncWebServer.git#1.2.7",
-      "ESPAsyncUDP": "https://github.com/DanielKnoop/ESPAsyncUDP.git"
-    },
-    "frameworks": "arduino",
-    "platforms": "espressif32, espressif8266"
+    [
+      {
+        "owner": "bblanchon",
+        "name": "ArduinoJson",
+        "version": "^6.17.3"
+      },
+      {
+        "name": "ESPAsyncWebServer",
+        "version": "https://github.com/DanielKnoop/ESPAsyncWebServer.git#1.2.7"
+      },
+      {
+        "name": "ESPAsyncUDP",
+        "version": "https://github.com/DanielKnoop/ESPAsyncUDP.git",
+        "platforms": ["espressif8266"]
+      }
+    ],
+    "frameworks": ["arduino"],
+    "platforms": ["espressif32", "espressif8266"]
   }
