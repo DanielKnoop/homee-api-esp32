@@ -15,14 +15,14 @@ virtualHomee vhih;
 ```
 
 Diesem virtualHomee müssen Nodes hinzugefügt werden (Vorzugsweise im Bereich Setup).
-Es dürfen maximal 99 Nodes hinzugefügt werden.
+
 ```cpp
 node* n1 = new node(10, 3001, "Luftsensor");
 vhih.addNode(n1);
 ```
 Der Konstruktor vom Node nimmt dabei folgende Attribute entgegen: NodeId, Profile, Name
 
-Diesem Node müssen noch Attribute zugeordnet werden. Ein Node darf maximal 99 Attribute bekommen.
+Diesem Node müssen noch Attribute zugeordnet werden. 
 
 ```cpp
     na1 = n1->AddAttributes(new nodeAttributes(5));
@@ -30,6 +30,8 @@ Diesem Node müssen noch Attribute zugeordnet werden. Ein Node darf maximal 99 A
     na1->setMinimumValue(-20);
     na1->setMaximumValue(60);
 ```
+
+Die maximale Anzahl an Nodes und Attributen ist maßgeblich vom Arbeitsspeicher des Boards abhängig. Jedes Node und jedes Attribut belegt knapp 500 Byte im Arbeitsspeicher. Es müssen mindestens 2 kB für dynamischen Speicher wie Sendebuffer etc. verfügbar bleiben.
 
 Im loop bekommen die Attribute dann ihre Werte. Es empfiehlt sich daher, die Nodes im globalen Bereich zu speichern.
 
@@ -78,6 +80,24 @@ vhih.start();
 gestartet werden.
 
 Um den Sensor zum homee hinzuzufügen sucht man in der homee-app unter Geräte hinzufügen nach "homee in homee" und wählt dort "mit homee verbinden" aus. Hier gibt man die IP des ESP ein sowie irgendein Benutzernamen und Kennwort. Die Zugangsdaten werden vom vhih nicht geprüft, daher sind diese nicht relevant.
+
+## Abhängigkeiten
+Die Library ist für ESP8266 und ESP32 Boards ausgelegt.
+
+### ESP8266
+Folgende Abhängigkeiten benötigt der ESP8266
+* ArduinoJson 6.17.3 (bblanchon)
+* ESPAsyncWebServer 1.2.7 (https://github.com/DanielKnoop/ESPAsyncWebServer)
+    * ESPAsyncTCP 1.2.2 (me-no-dev)
+* ESPAsyncUDP (https://github.com/DanielKnoop/ESPAsyncUDP)
+
+### ESP32
+Folgende Abhängigkeiten benötigt der ESP32
+* ArduinoJson >= 6.17.3 (Gibt es über die Paketverwaltung)
+* ESPAsyncWebServer >= 1.2.7 (https://github.com/DanielKnoop/ESPAsyncWebServer)
+    * AsyncTCP 1.1.1 (me-no-dev)
+
+## Hinweise
 
 Das Projekt ist angelehnt an die node-red Implementierung [node-red-contrib-homee](https://github.com/stfnhmplr/node-red-contrib-homee)
 von stfnhmplr. Vielen Dank, auch an alle anderen Vorreiter aus dem [homee-Forum](https://community.hom.ee).
