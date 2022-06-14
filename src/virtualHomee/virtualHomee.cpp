@@ -42,11 +42,6 @@ void virtualHomee::addNode(node *n)
     nds.AddNode(n);
 }
 
-node* virtualHomee::getNodeById(int32_t node_id)
-{
-    return nds.GetNodeById(node_id);
-}
-
 nodeAttributes *virtualHomee::getAttributeWithId(uint32_t id)
 {
     for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++)
