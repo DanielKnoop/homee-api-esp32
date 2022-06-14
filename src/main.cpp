@@ -31,6 +31,15 @@ nodeAttributes* na2;
 
 nodeAttributes* schalterAttribute;
 
+void attributeCallbackFunction(nodeAttributes* attribute)
+{
+  //int32_t nodeId = attribute->getNodeId();
+  //uint32_t attributeId = attribute->getId();
+
+  attribute->setCurrentValue(attribute->getTargetValue());
+  vhih.updateAttribute(attribute);
+}
+
 void setup() {
   // put your setup code here, to run once:
   //homee homee("homee-mac", "Benutzer", "Password");
@@ -58,18 +67,15 @@ void setup() {
   na1->setMaximumValue(60);
   na1->setCurrentValue(21);
   na2->setUnit("%");
-  
 
   node* n2 = new node(20, 10, "Schalter");
   schalterAttribute = n2->AddAttributes(new nodeAttributes(1, 200));
   schalterAttribute->setEditable(1);
   schalterAttribute->setMinimumValue(0);
   schalterAttribute->setMaximumValue(1);
-  schalterAttribute->setCallback([](nodeAttributes* a)
-  {
-    a->setCurrentValue(a->getTargetValue());
-    vhih.updateAttribute(a);
-  });
+
+  schalterAttribute->setCallback(attributeCallbackFunction);
+
   n2->AddAttributes(new nodeAttributes(1, 201));
   n2->AddAttributes(new nodeAttributes(1, 202));
   n2->AddAttributes(new nodeAttributes(1, 203));

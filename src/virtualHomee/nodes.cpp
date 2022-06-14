@@ -37,6 +37,18 @@ node* nodes::GetNode(uint8_t n)
     }
 }
 
+node* nodes::GetNodeById(int32_t nodeId)
+{
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    {
+        if(this->n[i]->getId() == nodeId)
+        {
+            return n[i];
+        }
+    }
+    return nullptr;
+}
+
 uint8_t nodes::GetNumberOfNodes() 
 {
     return this->numberOfNodes;

@@ -40,4 +40,5 @@ class node
         size_t size();
         void setImage(String _image);
         String getImage();
+        int32_t getId() {return id;};
 };
