@@ -48,6 +48,7 @@ private:
 public:
     void start();
     void addNode(node* n);
+    node* getNodeById(int32_t node_id);
     void updateAttribute(nodeAttributes* _nodeAttribute);
     void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
     void updateAttributeData(nodeAttributes* _nodeAttribute, String _data);
