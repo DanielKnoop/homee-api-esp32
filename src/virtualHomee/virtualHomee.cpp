@@ -89,6 +89,21 @@ String virtualHomee::getUrlParameterValue(String url, String parameterName)
     }
 }
 
+nodeAttributes* virtualHomee::getAttributeById(uint32_t _id)
+        {
+    for(int i = 0; i < this->nds.GetNumberOfNodes(); i++)
+    {
+        for(int j = 0; j < this->nds.GetNode(i)->GetNumberOfAttributes(); j++)
+        {
+            if(this->nds.GetNode(i)->GetAttribute(j)->getId() == _id)
+            {
+                return this->nds.GetNode(i)->GetAttribute(j);
+            }
+        }
+    }
+    return nullptr;
+}
+
 void virtualHomee::handleHttpOptionsAccessToken(AsyncWebServerRequest *request)
 {
     AsyncWebServerResponse *response = request->beginResponse(204);
