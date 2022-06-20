@@ -191,7 +191,7 @@ void virtualHomee::initializeWebsocketServer()
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {
                     int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
-                    double_t targetValue = atof(this->getUrlParameterValue(message, "target_value").c_str());
+                    double_t targetValue = this->getUrlParameterValue(message, "target_value").toDouble();
 #ifdef DEBUG_VIRTUAL_HOMEE
                     Serial.print("Attribute ID: ");
                     Serial.println(attributeId);

@@ -1,5 +1,7 @@
 #pragma once
 
+#define ARDUINOJSON_POSITIVE_EXPONENTIATION_THRESHOLD 1e9
+
 #if defined(ESP32)
 #include <WiFi.h>
 #include <AsyncTCP.h>
