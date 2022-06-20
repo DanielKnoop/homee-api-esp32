@@ -5,33 +5,33 @@ void virtualHomee::getSettings(JsonObject jsonDoc)
     jsonDoc["settings"]["address"] = "";
     jsonDoc["settings"]["city"] = "";
     jsonDoc["settings"]["zip"] = 11111;
-    jsonDoc["settings"]["state"] = "BW";
+    jsonDoc["settings"]["state"] = F("BW");
     jsonDoc["settings"]["latitude"] = "";
     jsonDoc["settings"]["longitude"] = "";
-    jsonDoc["settings"]["country"] = "Germany";
-    jsonDoc["settings"]["language"] = "de";
+    jsonDoc["settings"]["country"] = F("Germany");
+    jsonDoc["settings"]["language"] = F("de");
     jsonDoc["settings"]["wlan_dhcp"] = 1;
     jsonDoc["settings"]["remote_access"] = 1;
     jsonDoc["settings"]["beta"] = 0;
-    jsonDoc["settings"]["webhooks_key"] = "WEBHOOKKEY";
+    jsonDoc["settings"]["webhooks_key"] = F("WEBHOOKKEY");
     jsonDoc["settings"]["automatic_location_detection"] = 0;
     jsonDoc["settings"]["polling_interval"] = 60;
-    jsonDoc["settings"]["timezone"] = "Europe%2FBerlin";
+    jsonDoc["settings"]["timezone"] = F("Europe%2FBerlin");
     jsonDoc["settings"]["enable_analytics"] = 0;
     jsonDoc["settings"]["wlan_enabled"] = 1;
-    jsonDoc["settings"]["wlan_ip_address"] = "192.168.178.222";
-    jsonDoc["settings"]["wlan_ssid"] = "homeeWifi";
+    jsonDoc["settings"]["wlan_ip_address"] = F("192.168.178.222");
+    jsonDoc["settings"]["wlan_ssid"] = F("homeeWifi");
     jsonDoc["settings"]["wlan_mode"] = 2;
     jsonDoc["settings"]["online"] = 0;
     jsonDoc["settings"]["lan_enabled"] = 1;
     jsonDoc["settings"].createNestedArray("available_ssids").add("homeeWifi");
     jsonDoc["settings"]["time"] = 1562707105;
-    jsonDoc["settings"]["civil_time"] = "2019-07-09 23:18:25";
+    jsonDoc["settings"]["civil_time"] = F("2019-07-09 23:18:25");
     jsonDoc["settings"]["version"] = this->version;
     jsonDoc["settings"]["uid"] = this->homeeId;
     jsonDoc["settings"]["gateway_id"] = 1313337;
     jsonDoc["settings"]["local_ssl_enabled"] = false;
-    jsonDoc["settings"]["b2b_partner"] = "homee";
+    jsonDoc["settings"]["b2b_partner"] = F("homee");
     jsonDoc["settings"]["homee_name"] = this->homeeId;
     jsonDoc["settings"].createNestedArray("cubes");
 
@@ -90,7 +90,7 @@ String virtualHomee::getUrlParameterValue(String url, String parameterName)
 }
 
 nodeAttributes* virtualHomee::getAttributeById(uint32_t _id)
-        {
+{
     for(int i = 0; i < this->nds.GetNumberOfNodes(); i++)
     {
         for(int j = 0; j < this->nds.GetNode(i)->GetNumberOfAttributes(); j++)
@@ -220,7 +220,7 @@ void virtualHomee::initializeWebsocketServer()
                         JsonVariant jsonDoc = jsonBuffer->getRoot();
                         jsonDoc["compatibility_check"]["compatible"] = true;
                         jsonDoc["compatibility_check"]["account"] = true;
-                        jsonDoc["compatibility_check"]["external_homee_status"] = "none";
+                        jsonDoc["compatibility_check"]["external_homee_status"] = F("none");
                         jsonDoc["compatibility_check"]["your_version"] = true;
                         jsonDoc["compatibility_check"]["my_version"] = this->version;
                         jsonDoc["compatibility_check"]["my_homeeID"] = this->homeeId;
