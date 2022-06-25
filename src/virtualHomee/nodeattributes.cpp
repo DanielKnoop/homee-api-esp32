@@ -161,3 +161,8 @@ void nodeAttributes::executeCallback()
         callback(this);
     }
 }
+
+nodeAttributes::~nodeAttributes()
+{
+    callback = nullptr;
+}

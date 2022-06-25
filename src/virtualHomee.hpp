@@ -55,7 +55,7 @@ public:
     void updateAttribute(nodeAttributes* _nodeAttribute);
     void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
     void updateAttributeData(nodeAttributes* _nodeAttribute, String _data);
-
+    void updateNode(node* _node);
     size_t getNumberOfWSClients();
 
     virtualHomee();

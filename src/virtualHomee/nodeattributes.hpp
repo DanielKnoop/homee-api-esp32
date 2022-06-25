@@ -30,7 +30,8 @@ class nodeAttributes
     public:
         nodeAttributes(uint16_t _type);
         nodeAttributes(uint16_t _type, uint32_t _id);
-        
+        ~nodeAttributes();
+
         void executeCallback();
         
         void setId(uint32_t _id);
@@ -53,6 +54,8 @@ class nodeAttributes
         void setData(String _data);
         void setStepValue(double_t _step_value);
         double_t getStepValue();
+        void setState(uint8_t _state) { this->state = _state; }
+        uint8_t getState() { return this->state; }
         
         void setCallback(callbackFunction _callback);
         void GetJSONObject(JsonObject doc);

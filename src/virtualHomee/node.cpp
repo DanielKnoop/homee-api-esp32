@@ -59,34 +59,61 @@ nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
     return attributes;
 }
 
-void node::AddJSONObject(JsonArray jsonArray)
+void node::AddJSONObject(JsonObject jsonObject)
 {
-    JsonVariant jsonDoc = jsonArray.addElement();
-
-    jsonDoc["id"] = this->id;
-    jsonDoc["name"] = this->name;
-    jsonDoc["profile"] = this->profile;
-    jsonDoc["image"] = this->image;
-    jsonDoc["favorite"] = this->favorite;
-    jsonDoc["order"] = this->order;
-    jsonDoc["protocol"] = this->protocol;
-    jsonDoc["routing"] = this->routing;
-    jsonDoc["state"] = this->state;
-    jsonDoc["state_changed"] = this->state_changed;
-    jsonDoc["added"] = this->added;
-    jsonDoc["history"] = this->history;
-    jsonDoc["cube_type"] = this->cube_type;
-    jsonDoc["note"] = this->note;
-    jsonDoc["services"] = this->services;
-    jsonDoc["phonetic_name"] = this->phonetic_name;
-    jsonDoc["owner"] = this->owner;
-    jsonDoc["security"] = this->security;
-    JsonArray attributes = jsonDoc.createNestedArray("attributes");
+    jsonObject["id"] = this->id;
+    jsonObject["name"] = this->name;
+    jsonObject["profile"] = this->profile;
+    jsonObject["image"] = this->image;
+    jsonObject["favorite"] = this->favorite;
+    jsonObject["order"] = this->order;
+    jsonObject["protocol"] = this->protocol;
+    jsonObject["routing"] = this->routing;
+    jsonObject["state"] = this->state;
+    jsonObject["state_changed"] = this->state_changed;
+    jsonObject["added"] = this->added;
+    jsonObject["history"] = this->history;
+    jsonObject["cube_type"] = this->cube_type;
+    jsonObject["note"] = this->note;
+    jsonObject["services"] = this->services;
+    jsonObject["phonetic_name"] = this->phonetic_name;
+    jsonObject["owner"] = this->owner;
+    jsonObject["security"] = this->security;
+    JsonArray attributes = jsonObject.createNestedArray("attributes");
     for(int i = 0; i < this->numberOfAttributes; i++)
     {
         JsonObject attribute = attributes.createNestedObject();
         this->attributes[i]->GetJSONObject(attribute);
     }    
+}
+
+void node::AddJSONArrayElement(JsonArray jsonArray)
+{
+    JsonVariant jsonObject = jsonArray.addElement();
+    jsonObject["id"] = this->id;
+    jsonObject["name"] = this->name;
+    jsonObject["profile"] = this->profile;
+    jsonObject["image"] = this->image;
+    jsonObject["favorite"] = this->favorite;
+    jsonObject["order"] = this->order;
+    jsonObject["protocol"] = this->protocol;
+    jsonObject["routing"] = this->routing;
+    jsonObject["state"] = this->state;
+    jsonObject["state_changed"] = this->state_changed;
+    jsonObject["added"] = this->added;
+    jsonObject["history"] = this->history;
+    jsonObject["cube_type"] = this->cube_type;
+    jsonObject["note"] = this->note;
+    jsonObject["services"] = this->services;
+    jsonObject["phonetic_name"] = this->phonetic_name;
+    jsonObject["owner"] = this->owner;
+    jsonObject["security"] = this->security;
+    JsonArray attributes = jsonObject.createNestedArray("attributes");
+    for(int i = 0; i < this->numberOfAttributes; i++)
+    {
+        JsonObject attribute = attributes.createNestedObject();
+        this->attributes[i]->GetJSONObject(attribute);
+    }   
 }
 
 String node::getImage() 
@@ -97,4 +124,30 @@ String node::getImage()
 void node::setImage(String _image)
 {
     this->image = _image;
+}
+
+node::~node()
+{
+    for(int i = 0; i < this->GetNumberOfAttributes(); i++)
+    {
+        delete attributes[i];
+        attributes[i] = nullptr;
+    }
+}
+
+void node::setState(uint8_t _state)
+{
+    //for(int i = 0; i < this->GetNumberOfAttributes(); i++)
+    //{
+    //    this->GetAttribute(i)->setState(_state);
+    //}
+
+    this->state = _state;
+    this->state_changed = getTimestamp();
+}
+
+uint32_t node::getTimestamp()
+{
+    time_t now = time(&now);
+    return time(&now);
 }

@@ -31,14 +31,19 @@ class node
         uint8_t numberOfAttributes = 0;
 
         uint8_t calculateNextInstance(uint16_t _type);
+        uint32_t getTimestamp();
     public:
         node(uint32_t id, uint32_t profile, String name);
+        ~node();
         nodeAttributes* AddAttributes(nodeAttributes* attributes);
-        void AddJSONObject(JsonArray jsonArray);
+        void AddJSONArrayElement(JsonArray jsonArray);
+        void AddJSONObject(JsonObject jsonObject);
         uint8_t GetNumberOfAttributes();
         nodeAttributes* GetAttribute(uint8_t n);
         size_t size();
         void setImage(String _image);
         String getImage();
         int32_t getId() {return id;};
+        void setState(uint8_t _state);
+        uint8_t getState() { return this->state; };
 };

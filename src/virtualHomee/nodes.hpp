@@ -16,4 +16,5 @@ class nodes
         void GetJSONArray(JsonArray jsonDocument);
         size_t size();
         nodes();
+        ~nodes();
 };

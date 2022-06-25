@@ -68,8 +68,18 @@ void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
     AsyncWebSocketJsonBuffer* buffer = ws.makeJsonBuffer(false, _nodeAttribute->size());
     JsonVariant doc = buffer->getRoot();
     JsonObject attribute = doc.createNestedObject("attribute");
-    //JsonArray attribute = doc.createNestedArray("attribute");
     _nodeAttribute->GetJSONObject(attribute);
+    buffer->setLength();
+    ws.textAll(buffer);
+}
+
+void virtualHomee::updateNode(node* _node)
+{
+    ws.cleanupClients();
+    AsyncWebSocketJsonBuffer* buffer = ws.makeJsonBuffer(false, _node->size());
+    JsonVariant doc = buffer->getRoot();
+    JsonObject node = doc.createNestedObject("node");
+    _node->AddJSONObject(node);
     buffer->setLength();
     ws.textAll(buffer);
 }

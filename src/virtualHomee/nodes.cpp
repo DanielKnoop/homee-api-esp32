@@ -21,7 +21,7 @@ void nodes::GetJSONArray(JsonArray jsonDocument)
 {
     for(int i = 0; i < this->numberOfNodes; i++)
     {
-        n[i]->AddJSONObject(jsonDocument);
+        n[i]->AddJSONArrayElement(jsonDocument);
     }    
 }
 
@@ -57,4 +57,9 @@ uint8_t nodes::GetNumberOfNodes()
 nodes::nodes()
 {
 
+}
+
+nodes::~nodes()
+{
+    
 }
