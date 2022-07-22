@@ -2,8 +2,6 @@
 
 void nodeAttributes::GetJSONObject(JsonObject doc)
 {
-    //JsonVariant doc = jsonArray.createNestedObject("attribute");
-
     doc["id"] = this->id;
     doc["node_id"] = this->node_id;
     doc["instance"] = this->instance;
