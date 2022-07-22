@@ -90,30 +90,7 @@ void node::AddJSONObject(JsonObject jsonObject)
 void node::AddJSONArrayElement(JsonArray jsonArray)
 {
     JsonVariant jsonObject = jsonArray.addElement();
-    jsonObject["id"] = this->id;
-    jsonObject["name"] = this->name;
-    jsonObject["profile"] = this->profile;
-    jsonObject["image"] = this->image;
-    jsonObject["favorite"] = this->favorite;
-    jsonObject["order"] = this->order;
-    jsonObject["protocol"] = this->protocol;
-    jsonObject["routing"] = this->routing;
-    jsonObject["state"] = this->state;
-    jsonObject["state_changed"] = this->state_changed;
-    jsonObject["added"] = this->added;
-    jsonObject["history"] = this->history;
-    jsonObject["cube_type"] = this->cube_type;
-    jsonObject["note"] = this->note;
-    jsonObject["services"] = this->services;
-    jsonObject["phonetic_name"] = this->phonetic_name;
-    jsonObject["owner"] = this->owner;
-    jsonObject["security"] = this->security;
-    JsonArray attributes = jsonObject.createNestedArray("attributes");
-    for(int i = 0; i < this->numberOfAttributes; i++)
-    {
-        JsonObject attribute = attributes.createNestedObject();
-        this->attributes[i]->GetJSONObject(attribute);
-    }   
+    this->AddJSONObject(jsonObject);
 }
 
 String node::getImage() 
@@ -137,11 +114,6 @@ node::~node()
 
 void node::setState(uint8_t _state)
 {
-    //for(int i = 0; i < this->GetNumberOfAttributes(); i++)
-    //{
-    //    this->GetAttribute(i)->setState(_state);
-    //}
-
     this->state = _state;
     this->state_changed = getTimestamp();
 }
