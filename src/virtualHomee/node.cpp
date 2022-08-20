@@ -89,7 +89,7 @@ void node::AddJSONObject(JsonObject jsonObject)
 
 void node::AddJSONArrayElement(JsonArray jsonArray)
 {
-    JsonVariant jsonObject = jsonArray.addElement();
+    JsonObject jsonObject = jsonArray.createNestedObject();
     this->AddJSONObject(jsonObject);
 }
 

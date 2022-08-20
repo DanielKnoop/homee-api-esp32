@@ -190,9 +190,9 @@ void virtualHomee::initializeWebsocketServer()
                 {
 #ifdef DEBUG_VIRTUAL_HOMEE
                     Serial.print("DEBUG: Reserve Json Buffer Size: ");
-                    Serial.println(nds.size() + 16);
+                    Serial.println(nds.size());
 #endif   
-                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size() + 16);
+                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size());
                     JsonVariant doc = jsonBuffer->getRoot();
 
                     nds.GetJSONArray(doc.createNestedArray("nodes"));
