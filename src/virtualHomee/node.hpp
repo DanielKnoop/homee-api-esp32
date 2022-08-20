@@ -33,7 +33,7 @@ class node
         uint8_t calculateNextInstance(uint16_t _type);
         uint32_t getTimestamp();
     public:
-        node(uint32_t id, uint32_t profile, String name);
+        node(uint32_t id, uint32_t profile, const String& name);
         ~node();
         nodeAttributes* AddAttributes(nodeAttributes* attributes);
         void AddJSONArrayElement(JsonArray jsonArray);
