@@ -321,7 +321,7 @@ void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _valu
     this->updateAttribute(_attribute);
 }
 
-void virtualHomee::updateAttributeData(nodeAttributes* _attribute, String _data)
+void virtualHomee::updateAttributeData(nodeAttributes* _attribute, const String& _data)
 {
     _attribute->setData(_data);
     this->updateAttribute(_attribute);
@@ -345,6 +345,15 @@ void virtualHomee::clientDisconnected()
 size_t virtualHomee::getNumberOfWSClients()
 {
     return this->numberOfWSClients;
+}
+
+String virtualHomee::getHomeeId()
+{
+    return this->homeeId;
+}
+void virtualHomee::setHomeeId(const String& _homeeId)
+{
+    this->homeeId = _homeeId;
 }
 
 virtualHomee::virtualHomee(const String& _homeeId)

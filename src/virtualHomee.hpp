@@ -57,6 +57,8 @@ public:
     void updateAttributeData(nodeAttributes* _nodeAttribute, const String& _data);
     void updateNode(node* _node);
     size_t getNumberOfWSClients();
+    String getHomeeId();
+    void setHomeeId(const String& _homeeId);
 
     virtualHomee();
     virtualHomee(const String& _homeeId);
