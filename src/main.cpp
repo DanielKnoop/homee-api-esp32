@@ -80,8 +80,36 @@ void setup() {
   n2->AddAttributes(new nodeAttributes(1, 202));
   n2->AddAttributes(new nodeAttributes(1, 203));
 
+
+  node* n3 = new node(30, 1002, "Color Licht");
+  nodeAttributes* a_on = n3->AddAttributes(new nodeAttributes(1));
+  a_on->setId( 30 * 100 + 1);
+  a_on->setEditable(1);
+  a_on->setMinimumValue(0);
+  a_on->setMaximumValue(1);
+  a_on->setTargetValue(0);
+  a_on->setCurrentValue(0);
+  nodeAttributes* a_dimm = n3->AddAttributes(new nodeAttributes(2));
+  a_dimm->setId( 30 * 100 + 2);
+  a_dimm->setEditable(1);
+  a_dimm->setUnit("%");
+  a_dimm->setMinimumValue(0);
+  a_dimm->setMaximumValue(100);
+  a_dimm->setCurrentValue(0 / 2.54);
+  a_dimm->setTargetValue(0 / 2.54);
+  nodeAttributes* a_color = n3->AddAttributes(new nodeAttributes(23));
+  a_color->setId( 30 * 100 + 4);
+  a_color->setEditable(1);
+  a_color->setTargetValue(0);
+  a_color->setCurrentValue(0);
+  a_color->setMinimumValue(0);
+  a_color->setMaximumValue(16777215);
+  a_color->setData("7001020%3B16419669%3B12026363%3B16525995");
+
+
   vhih.addNode(n1);
   vhih.addNode(n2);
+  vhih.addNode(n3);
 
   vhih.start();
 
