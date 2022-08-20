@@ -25,7 +25,7 @@ nodeAttributes* node::GetAttribute(uint8_t n)
     return nullptr;
 }
 
-node::node(uint32_t id, uint32_t profile, String name)
+node::node(uint32_t id, uint32_t profile, const String& name)
 {
     this->id = id;
     this->name = name;

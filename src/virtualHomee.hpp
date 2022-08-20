@@ -37,7 +37,7 @@ private:
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
     nodeAttributes* getAttributeWithId(uint32_t id);
-    String getUrlParameterValue(String url, String parameterName);
+    String getUrlParameterValue(const String& url,const String& parameterName);
     String gethomeeId();
     void sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
@@ -54,11 +54,11 @@ public:
     nodeAttributes* getAttributeById(uint32_t _id); 
     void updateAttribute(nodeAttributes* _nodeAttribute);
     void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
-    void updateAttributeData(nodeAttributes* _nodeAttribute, String _data);
+    void updateAttributeData(nodeAttributes* _nodeAttribute, const String& _data);
     void updateNode(node* _node);
     size_t getNumberOfWSClients();
 
     virtualHomee();
-    virtualHomee(String _homeeId);
+    virtualHomee(const String& _homeeId);
     ~virtualHomee();
 };

@@ -84,7 +84,7 @@ void virtualHomee::updateNode(node* _node)
     ws.textAll(buffer);
 }
 
-String virtualHomee::getUrlParameterValue(String url, String parameterName)
+String virtualHomee::getUrlParameterValue(const String& url, const String& parameterName)
 {
     int index = url.indexOf(parameterName + "=");
     String substr = url.substring(index + parameterName.length() + 1);
@@ -192,7 +192,7 @@ void virtualHomee::initializeWebsocketServer()
                     Serial.print("DEBUG: Reserve Json Buffer Size: ");
                     Serial.println(nds.size() + 16);
 #endif   
-                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size());
+                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size() + 16);
                     JsonVariant doc = jsonBuffer->getRoot();
 
                     nds.GetJSONArray(doc.createNestedArray("nodes"));
@@ -347,7 +347,7 @@ size_t virtualHomee::getNumberOfWSClients()
     return this->numberOfWSClients;
 }
 
-virtualHomee::virtualHomee(String _homeeId)
+virtualHomee::virtualHomee(const String& _homeeId)
     : virtualHomee()
 {
     this->homeeId = _homeeId;
