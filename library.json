@@ -28,7 +28,7 @@
       {
         "owner": "bblanchon",
         "name": "ArduinoJson",
-        "version": "^6.17.3"
+        "version": "^6.19.4"
       },
       {
         "name": "ESPAsyncWebServer",
