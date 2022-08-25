@@ -123,3 +123,20 @@ uint32_t node::getTimestamp()
     time_t now = time(&now);
     return time(&now);
 }
+
+void node::serializeNode(Stream& outputStream)
+{
+    //{"id":-1,"name":"homee","profile":1,"image":"default","favorite":0,"order":1,"protocol":3,"routing":0,"state":1,"state_changed":1618853497,"added":1618853497,"history":0,"cube_type":3,"note":"","services":4,"phonetic_name":"","owner":1,"security":0,"attributes":[]}
+
+    outputStream.printf("{\"id\":%d,\"name\":\"%s\",\"profile\":%d,\"image\":\"%s\",\"favorite\":%d,\"order\":%d,\"protocol\":%d,\"routing\":%d,\"state\":%d,\"state_changed\":%d,\"added\":%d,\"history\":%d,\"cube_type\":%d,\"note\":\"%s\",\"services\":%d,\"phonetic_name\":\"%s\",\"owner\":%d,\"security\":%d,\"attributes\":[", 
+        this->id, this->name.c_str(), this->profile, this->image.c_str(), this->favorite, this->order, this->protocol, this->routing, this->state, this->state_changed, this->added, this->history, this->cube_type, this->note.c_str(), this->services, this->phonetic_name.c_str(), this->owner, this->security);
+    for(int i = 0; i < this->GetNumberOfAttributes(); i++)
+    {
+        if(i > 0)
+        {
+            outputStream.print(',');
+        }
+        this->GetAttribute(i)->serializeAttributes(outputStream);
+    }
+    outputStream.print("]}");
+}

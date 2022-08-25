@@ -59,6 +59,7 @@ public:
     size_t getNumberOfWSClients();
     String getHomeeId();
     void setHomeeId(const String& _homeeId);
+    void serializeNodes(Stream& outputStream);
 
     virtualHomee();
     virtualHomee(const String& _homeeId);

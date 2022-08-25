@@ -48,4 +48,5 @@ class node
         uint8_t getState() { return this->state; };
         void setNote(String _note) { this->note = _note; }
         String getNote() { return this->note; }
+        void serializeNode(Stream& outputStream);
 };

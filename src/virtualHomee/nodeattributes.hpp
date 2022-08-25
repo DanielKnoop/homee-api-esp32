@@ -60,4 +60,6 @@ class nodeAttributes
         void setCallback(callbackFunction _callback);
         void GetJSONObject(JsonObject doc);
         size_t size();
+
+        void serializeAttributes(Stream& outputStream);
 };
