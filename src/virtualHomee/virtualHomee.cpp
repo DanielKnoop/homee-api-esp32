@@ -192,11 +192,16 @@ void virtualHomee::initializeWebsocketServer()
                     Serial.print("DEBUG: Reserve Json Buffer Size: ");
                     Serial.println(nds.size() + 16);
 #endif   
-                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size() + 16);
-                    JsonVariant doc = jsonBuffer->getRoot();
+                    //AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size() + 16);
+                    //JsonVariant doc = jsonBuffer->getRoot();
 
-                    nds.GetJSONArray(doc.createNestedArray("nodes"));
-                    this->sendWSMessage(jsonBuffer, client);
+                    //nds.GetJSONArray(doc.createNestedArray("nodes"));
+                    //this->sendWSMessage(jsonBuffer, client);
+                    size_t size = this->measureSerializeNodes();
+                    AsyncWebSocketMessageBuffer * buffer = ws.makeBuffer(size);
+                    WriteBuffer writeBuffer(buffer->get(), buffer->length());
+                    this->serializeNodes(writeBuffer);
+                    client->text(buffer);
                 }
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {

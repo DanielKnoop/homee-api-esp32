@@ -22,6 +22,7 @@
 #include "virtualHomee/nodes.hpp"
 
 #include "virtualHomee/MeasureBuffer.h"
+#include "virtualHomee/WriteBuffer.h"
 
 class virtualHomee
 {
