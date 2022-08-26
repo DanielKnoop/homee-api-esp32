@@ -41,7 +41,6 @@ void attributeCallbackFunction(nodeAttributes* attribute)
 }
 
 void setup() {
-  // put your setup code here, to run once:
   //homee homee("homee-mac", "Benutzer", "Password");
   randomSeed(analogRead(0));
 
