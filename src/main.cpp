@@ -106,6 +106,10 @@ void loop() {
       newValue = na1->getMaximumValue();
     }
     vhih.updateAttributeValue(na1, newValue);
+
+    Serial.print("MeasuresSize: ");
+    Serial.println(vhih.measureSerializeNodes());
+
   }
 }
 #endif

@@ -61,5 +61,5 @@ class nodeAttributes
         void GetJSONObject(JsonObject doc);
         size_t size();
 
-        void serializeAttributes(Stream& outputStream);
+        void serializeAttributes(Print& outputStream);
 };

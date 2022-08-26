@@ -124,7 +124,7 @@ uint32_t node::getTimestamp()
     return time(&now);
 }
 
-void node::serializeNode(Stream& outputStream)
+void node::serializeNode(Print& outputStream)
 {
     //{"id":-1,"name":"homee","profile":1,"image":"default","favorite":0,"order":1,"protocol":3,"routing":0,"state":1,"state_changed":1618853497,"added":1618853497,"history":0,"cube_type":3,"note":"","services":4,"phonetic_name":"","owner":1,"security":0,"attributes":[]}
 

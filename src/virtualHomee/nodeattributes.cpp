@@ -165,7 +165,7 @@ nodeAttributes::~nodeAttributes()
     callback = nullptr;
 }
 
-void nodeAttributes::serializeAttributes(Stream& outputStream)
+void nodeAttributes::serializeAttributes(Print& outputStream)
 {
     //{"id":1000,"node_id":10,"instance":0,"minimum":-20,"maximum":60,"current_value":20.6,"target_value":20.6,"last_value":21,"unit":"°C","step_value":1,"editable":0,"type":5,"state":1,"last_changed":1661447550,"changed_by":1,"changed_by_id":0,"based_on":1,"data":"","name":""}
 

@@ -21,6 +21,8 @@
 #include "ArduinoJson.h"
 #include "virtualHomee/nodes.hpp"
 
+#include "virtualHomee/MeasureBuffer.h"
+
 class virtualHomee
 {
 private:
@@ -59,7 +61,9 @@ public:
     size_t getNumberOfWSClients();
     String getHomeeId();
     void setHomeeId(const String& _homeeId);
-    void serializeNodes(Stream& outputStream);
+
+    size_t measureSerializeNodes();
+    void serializeNodes(Print& outputStream);
 
     virtualHomee();
     virtualHomee(const String& _homeeId);

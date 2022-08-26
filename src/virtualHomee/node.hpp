@@ -4,10 +4,26 @@
 #include "nodeattributes.hpp"
 
 #define MAX_NUMBER_OF_NODES 99
-#define MAX_NUMBER_OF_ATTRIBUTES 99
+#define MAX_NUMBER_OF_ATTRIBUTES 30
 
 class node
 {
+    public:
+        node(uint32_t id, uint32_t profile, const String& name);
+        ~node();
+        
+        nodeAttributes* AddAttributes(nodeAttributes* attributes);
+        uint8_t GetNumberOfAttributes();
+        nodeAttributes* GetAttribute(uint8_t n);
+
+        void setImage(String _image);
+        String getImage();
+        int32_t getId() {return id;};
+        void setState(uint8_t _state);
+        uint8_t getState() { return this->state; };
+        void setNote(String _note) { this->note = _note; }
+        String getNote() { return this->note; }
+
     private:
         int32_t id = 0;
         String name = ""; 
@@ -32,21 +48,13 @@ class node
 
         uint8_t calculateNextInstance(uint16_t _type);
         uint32_t getTimestamp();
-    public:
-        node(uint32_t id, uint32_t profile, const String& name);
-        ~node();
-        nodeAttributes* AddAttributes(nodeAttributes* attributes);
+
+        void serializeNode(Print& outputStream);
+
+        size_t size();
         void AddJSONArrayElement(JsonArray jsonArray);
         void AddJSONObject(JsonObject jsonObject);
-        uint8_t GetNumberOfAttributes();
-        nodeAttributes* GetAttribute(uint8_t n);
-        size_t size();
-        void setImage(String _image);
-        String getImage();
-        int32_t getId() {return id;};
-        void setState(uint8_t _state);
-        uint8_t getState() { return this->state; };
-        void setNote(String _note) { this->note = _note; }
-        String getNote() { return this->note; }
-        void serializeNode(Stream& outputStream);
+
+        friend class virtualHomee;
+        friend class nodes;
 };
