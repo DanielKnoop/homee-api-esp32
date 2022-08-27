@@ -24,12 +24,36 @@
 #include "virtualHomee/MeasureBuffer.h"
 #include "virtualHomee/WriteBuffer.h"
 
-class virtualHomee
+struct virtualHomeeValues
 {
-private:
     String homeeId;
     String version;
-    const char* access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
+    const char *access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
+};
+class virtualHomee
+{
+public:
+    void start();
+    void addNode(node *n);
+    node *getNodeById(int32_t node_id);
+    nodeAttributes *getAttributeById(uint32_t _id);
+    void updateAttribute(nodeAttributes *_nodeAttribute);
+    void updateAttributeValue(nodeAttributes *_nodeAttribute, double _newValue);
+    void updateAttributeData(nodeAttributes *_nodeAttribute, const String &_data);
+    void updateNode(node *_node);
+    size_t getNumberOfWSClients();
+    String getHomeeId();
+    void setHomeeId(const String &_homeeId);
+
+    size_t measureSerializeNodes();
+    void serializeNodes(Print &outputStream);
+
+    virtualHomee();
+    virtualHomee(const String &_homeeId);
+    ~virtualHomee();
+
+private:
+    virtualHomeeValues value;
 
     AsyncWebServer server;
     AsyncWebSocket ws;
@@ -39,34 +63,15 @@ private:
 
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
-    nodeAttributes* getAttributeWithId(uint32_t id);
-    String getUrlParameterValue(const String& url,const String& parameterName);
+    nodeAttributes *getAttributeWithId(uint32_t id);
+    String getUrlParameterValue(const String &url, const String &parameterName);
     String gethomeeId();
-    void sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client);
+    void sendWSMessage(AsyncWebSocketJsonBuffer *jsonBuffer, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
     void clientConnected();
     void clientDisconnected();
     void initializeWebServer();
     void initializeWebsocketServer();
-    static void handleHttpPostRequest(virtualHomee* context, AsyncWebServerRequest *request);
+    static void handleHttpPostRequest(virtualHomee *context, AsyncWebServerRequest *request);
     static void handleHttpOptionsAccessToken(AsyncWebServerRequest *request);
-public:
-    void start();
-    void addNode(node* n);
-    node* getNodeById(int32_t node_id);
-    nodeAttributes* getAttributeById(uint32_t _id); 
-    void updateAttribute(nodeAttributes* _nodeAttribute);
-    void updateAttributeValue(nodeAttributes* _nodeAttribute, double _newValue);
-    void updateAttributeData(nodeAttributes* _nodeAttribute, const String& _data);
-    void updateNode(node* _node);
-    size_t getNumberOfWSClients();
-    String getHomeeId();
-    void setHomeeId(const String& _homeeId);
-
-    size_t measureSerializeNodes();
-    void serializeNodes(Print& outputStream);
-
-    virtualHomee();
-    virtualHomee(const String& _homeeId);
-    ~virtualHomee();
 };

@@ -27,12 +27,12 @@ void virtualHomee::getSettings(JsonObject jsonDoc)
     jsonDoc["settings"].createNestedArray("available_ssids").add("homeeWifi");
     jsonDoc["settings"]["time"] = 1562707105;
     jsonDoc["settings"]["civil_time"] = F("2019-07-09 23:18:25");
-    jsonDoc["settings"]["version"] = this->version;
-    jsonDoc["settings"]["uid"] = this->homeeId;
+    jsonDoc["settings"]["version"] = this->value.version;
+    jsonDoc["settings"]["uid"] = this->value.homeeId;
     jsonDoc["settings"]["gateway_id"] = 1313337;
     jsonDoc["settings"]["local_ssl_enabled"] = false;
     jsonDoc["settings"]["b2b_partner"] = F("homee");
-    jsonDoc["settings"]["homee_name"] = this->homeeId;
+    jsonDoc["settings"]["homee_name"] = this->value.homeeId;
     jsonDoc["settings"].createNestedArray("cubes");
 
 }
@@ -126,10 +126,10 @@ void virtualHomee::handleHttpPostRequest(virtualHomee* context, AsyncWebServerRe
 { 
     char _buff[128];
 
-    sprintf_P(_buff, PSTR("access_token=%s&user_id=1&device_id=1&expires=31536000"), context->access_token);
+    sprintf_P(_buff, PSTR("access_token=%s&user_id=1&device_id=1&expires=31536000"), context->value.access_token);
     AsyncWebServerResponse *response = request->beginResponse(200, "application/x-www-form-urlencoded", _buff);
 
-    sprintf_P(_buff, PSTR("access_token=%s;Max-Age=2592000;"), context->access_token);
+    sprintf_P(_buff, PSTR("access_token=%s;Max-Age=2592000;"), context->value.access_token);
     response->addHeader("set-cookie", _buff);
 
     request->send(response);
@@ -187,17 +187,14 @@ void virtualHomee::initializeWebsocketServer()
                     
                 }
                 else if (message.equalsIgnoreCase("GET:nodes"))
-                {
-#ifdef DEBUG_VIRTUAL_HOMEE
-                    Serial.print("DEBUG: Reserve Json Buffer Size: ");
-                    Serial.println(nds.size() + 16);
-#endif   
-                    //AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, nds.size() + 16);
-                    //JsonVariant doc = jsonBuffer->getRoot();
-
-                    //nds.GetJSONArray(doc.createNestedArray("nodes"));
-                    //this->sendWSMessage(jsonBuffer, client);
+                {  
                     size_t size = this->measureSerializeNodes();
+
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.print("DEBUG: Reserve Buffer Size: ");
+                    Serial.println(size);
+#endif 
+
                     AsyncWebSocketMessageBuffer * buffer = ws.makeBuffer(size);
                     WriteBuffer writeBuffer(buffer->get(), buffer->length());
                     this->serializeNodes(writeBuffer);
@@ -237,8 +234,8 @@ void virtualHomee::initializeWebsocketServer()
                         jsonDoc["compatibility_check"]["account"] = true;
                         jsonDoc["compatibility_check"]["external_homee_status"] = F("none");
                         jsonDoc["compatibility_check"]["your_version"] = true;
-                        jsonDoc["compatibility_check"]["my_version"] = this->version;
-                        jsonDoc["compatibility_check"]["my_homeeID"] = this->homeeId;
+                        jsonDoc["compatibility_check"]["my_version"] = this->value.version;
+                        jsonDoc["compatibility_check"]["my_homeeID"] = this->value.homeeId;
 
                         this->sendWSMessage(jsonBuffer, client);
                     }
@@ -246,7 +243,7 @@ void virtualHomee::initializeWebsocketServer()
                     {
                         AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 200);
                         JsonVariant jsonDoc = jsonBuffer->getRoot();
-                        jsonDoc["pairing"]["access_token"] = this->access_token;
+                        jsonDoc["pairing"]["access_token"] = this->value.access_token;
                         jsonDoc["pairing"]["expires"] = 315360000;
                         jsonDoc["pairing"]["userID"] = 1;
                         jsonDoc["pairing"]["deviceID"] = 1;
@@ -334,7 +331,7 @@ void virtualHomee::updateAttributeData(nodeAttributes* _attribute, const String&
 
 String virtualHomee::gethomeeId()
 {
-    return this->homeeId;
+    return this->value.homeeId;
 }
 
 void virtualHomee::clientConnected()
@@ -354,17 +351,17 @@ size_t virtualHomee::getNumberOfWSClients()
 
 String virtualHomee::getHomeeId()
 {
-    return this->homeeId;
+    return this->value.homeeId;
 }
 void virtualHomee::setHomeeId(const String& _homeeId)
 {
-    this->homeeId = _homeeId;
+    this->value.homeeId = _homeeId;
 }
 
 virtualHomee::virtualHomee(const String& _homeeId)
     : virtualHomee()
 {
-    this->homeeId = _homeeId;
+    this->value.homeeId = _homeeId;
 }
 
 virtualHomee::virtualHomee()
@@ -373,8 +370,8 @@ virtualHomee::virtualHomee()
 {
     String mac = WiFi.macAddress();
     mac.replace(":", "");
-    this->homeeId = mac;
-    this->version = "2.25.0 (ed9c50)";
+    this->value.homeeId = mac;
+    this->value.version = "2.25.0 (ed9c50)";
     this->nds.AddNode(new node(-1, 1, "homee"));
 }
 
