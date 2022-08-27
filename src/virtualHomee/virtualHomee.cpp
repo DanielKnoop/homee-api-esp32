@@ -39,24 +39,48 @@ node *virtualHomee::getNode(uint8_t n)
 
 void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
 {
+    //{"attribute":{"id":1000,"node_id":10,"instance":0,"minimum":-20,"maximum":60,"current_value":21,"target_value":21,"last_value":21,"unit":"°C","step_value":1,"editable":0,"type":5,"state":1,"last_changed":1661625881,"changed_by":1,"changed_by_id":0,"based_on":1,"data":"","name":""}}
     ws.cleanupClients();
-    AsyncWebSocketJsonBuffer *buffer = ws.makeJsonBuffer(false, _nodeAttribute->size());
-    JsonVariant doc = buffer->getRoot();
-    JsonObject attribute = doc.createNestedObject("attribute");
-    _nodeAttribute->GetJSONObject(attribute);
-    buffer->setLength();
+
+    MeasureBuffer measure;
+    measure.print("{\"attribute\":");
+    _nodeAttribute->value.serialize(measure);
+    measure.print("}");
+    size_t size = measure.size();
+
+    AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(size);
+    buffer->lock();
+    WriteBuffer writerBuffer(buffer->get(), buffer->length());
+    writerBuffer.print("{\"attribute\":");
+    _nodeAttribute->value.serialize(writerBuffer);
+    writerBuffer.print("}");
+    buffer->unlock();
+    yield();
     ws.textAll(buffer);
+    yield();
 }
 
 void virtualHomee::updateNode(node *_node)
 {
+    //{"node":{"id":10,"name":"Luftsensor","profile":3001,"image":"default","favorite":0,"order":1,"protocol":3,"routing":0,"state":1,"state_changed":1618853497,"added":1618853497,"history":0,"cube_type":3,"note":"","services":4,"phonetic_name":"","owner":1,"security":0,"attributes":[{"id":1000,"node_id":10,"instance":0,"minimum":-20,"maximum":60,"current_value":21,"target_value":21,"last_value":21,"unit":"°C","step_value":1,"editable":0,"type":5,"state":1,"last_changed":1661625881,"changed_by":1,"changed_by_id":0,"based_on":1,"data":"","name":""},{"id":1001,"node_id":10,"instance":0,"minimum":0,"maximum":100,"current_value":0,"target_value":0,"last_value":0,"unit":"%","step_value":1,"editable":0,"type":7,"state":1,"last_changed":1619366694,"changed_by":1,"changed_by_id":0,"based_on":1,"data":"","name":""}]}}
     ws.cleanupClients();
-    AsyncWebSocketJsonBuffer *buffer = ws.makeJsonBuffer(false, _node->size());
-    JsonVariant doc = buffer->getRoot();
-    JsonObject node = doc.createNestedObject("node");
-    _node->AddJSONObject(node);
-    buffer->setLength();
+
+    MeasureBuffer measure;
+    measure.print("\"node\":{");
+    _node->value.serialize(measure);
+    measure.print("}");
+    size_t size = measure.size();
+
+    AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(size);
+    buffer->lock();
+    WriteBuffer writerBuffer(buffer->get(), buffer->length());
+    writerBuffer.print("{\"node\":");
+    _node->value.serialize(writerBuffer);
+    writerBuffer.print("}");
+    buffer->unlock();
+    yield();
     ws.textAll(buffer);
+    yield();
 }
 
 String virtualHomee::getUrlParameterValue(const String &url, const String &parameterName)
@@ -262,14 +286,17 @@ void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _valu
 {
     _attribute->setTargetValue(_value);
     this->updateAttribute(_attribute);
+    yield();
     _attribute->setCurrentValue(_value);
     this->updateAttribute(_attribute);
+    yield();
 }
 
 void virtualHomee::updateAttributeData(nodeAttributes *_attribute, const String &_data)
 {
     _attribute->setData(_data);
     this->updateAttribute(_attribute);
+    yield();
 }
 
 String virtualHomee::gethomeeId()
@@ -340,7 +367,7 @@ void virtualHomee::serializeNodes(Print &outputStream)
         {
             outputStream.print(',');
         }
-        this->getNode(i)->serializeNode(outputStream);
+        this->getNode(i)->value.serialize(outputStream);
     }
     outputStream.print("]}");
 }

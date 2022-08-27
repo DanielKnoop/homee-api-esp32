@@ -1,7 +1,5 @@
 #pragma once
 
-#define ARDUINOJSON_POSITIVE_EXPONENTIATION_THRESHOLD 1e9
-
 #if defined(ESP32)
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -17,8 +15,6 @@
 #include <AsyncWebSocket.h>
 #include <time.h>
 
-#include "AsyncJson.h"
-#include "ArduinoJson.h"
 #include "virtualHomee/node.hpp"
 
 #include "virtualHomee/MeasureBuffer.h"

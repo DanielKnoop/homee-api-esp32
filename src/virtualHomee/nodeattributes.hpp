@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ArduinoJson.h"
-
+#include <Arduino.h>
 struct nodeAttributesValues
 {
     uint32_t id = 0;
@@ -23,6 +22,30 @@ struct nodeAttributesValues
     uint8_t based_on = 1;
     String data = "";
     String name = "";
+
+    void serialize(Print &outputStream)
+    {
+        outputStream.printf("{\"id\":%d,\"node_id\":%d,\"instance\":%d,\"minimum\":%f,\"maximum\":%f,\"current_value\":%f,\"target_value\":%f,\"last_value\":%f,\"unit\":\"%s\",\"step_value\":%f,\"editable\":%d,\"type\":%d,\"state\":%d,\"last_changed\":%d,\"changed_by\":%d,\"changed_by_id\":%d,\"based_on\":%d,\"data\":\"%s\",\"name\":\"%s\"}", 
+            this->id, 
+            this->node_id, 
+            this->instance, 
+            this->minimum, 
+            this->maximum, 
+            this->current_value, 
+            this->target_value, 
+            this->last_value,
+            this->unit.c_str(),
+            this->step_value, 
+            this->editable, 
+            this->type, 
+            this->state, 
+            this->last_changed, 
+            this->changed_by, 
+            this->changed_by_id, 
+            this->based_on, 
+            this->data.c_str(), 
+            this->name.c_str());
+    };
 };
 
 class nodeAttributes
@@ -68,11 +91,7 @@ private:
 
     void executeCallback();
 
-    void GetJSONObject(JsonObject doc);
-    size_t size();
-
-    void serializeAttributes(Print &outputStream);
-
     friend class node;
     friend class virtualHomee;
+    friend struct nodeValues;
 };
