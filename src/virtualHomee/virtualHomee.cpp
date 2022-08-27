@@ -37,29 +37,48 @@ void virtualHomee::getSettings(JsonObject jsonDoc)
 
 }
 
-void virtualHomee::addNode(node *n)
+uint8_t virtualHomee::GetNumberOfNodes()
 {
-    nds.AddNode(n);
+    return this->value.numberOfNodes;
+}
+
+void virtualHomee::addNode(node* n)
+{
+    if(this->value.numberOfNodes > MAX_NUMBER_OF_NODES)
+        return;
+    this->value.nodes[this->value.numberOfNodes++] = n;
 }
 
 node* virtualHomee::getNodeById(int32_t node_id)
 {
-    return nds.GetNodeById(node_id);
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    {
+        if(this->getNode(i)->getId() == node_id)
+        {
+            return this->getNode(i);
+        }
+    }
+    return nullptr;
 }
 
 nodeAttributes *virtualHomee::getAttributeWithId(uint32_t id)
 {
-    for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++)
+    for (uint8_t i = 0; i < this->GetNumberOfNodes(); i++)
     {
-        for (uint8_t j = 0; j < nds.GetNode(i)->GetNumberOfAttributes(); j++)
+        for (uint8_t j = 0; j < this->getNode(i)->GetNumberOfAttributes(); j++)
         {
-            if (nds.GetNode(i)->GetAttribute(j)->getId() == id)
+            if (this->getNode(i)->GetAttribute(j)->getId() == id)
             {
-                return nds.GetNode(i)->GetAttribute(j);
+                return this->getNode(i)->GetAttribute(j);
             }
         }
     }
     return nullptr;
+}
+
+node *virtualHomee::getNode(uint8_t n)
+{
+    return this->value.nodes[n];
 }
 
 void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
@@ -101,13 +120,13 @@ String virtualHomee::getUrlParameterValue(const String& url, const String& param
 
 nodeAttributes* virtualHomee::getAttributeById(uint32_t _id)
 {
-    for(int i = 0; i < this->nds.GetNumberOfNodes(); i++)
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
     {
-        for(int j = 0; j < this->nds.GetNode(i)->GetNumberOfAttributes(); j++)
+        for(int j = 0; j < this->getNode(i)->GetNumberOfAttributes(); j++)
         {
-            if(this->nds.GetNode(i)->GetAttribute(j)->getId() == _id)
+            if(this->getNode(i)->GetAttribute(j)->getId() == _id)
             {
-                return this->nds.GetNode(i)->GetAttribute(j);
+                return this->getNode(i)->GetAttribute(j);
             }
         }
     }
@@ -194,7 +213,6 @@ void virtualHomee::initializeWebsocketServer()
                     Serial.print("DEBUG: Reserve Buffer Size: ");
                     Serial.println(size);
 #endif 
-
                     AsyncWebSocketMessageBuffer * buffer = ws.makeBuffer(size);
                     WriteBuffer writeBuffer(buffer->get(), buffer->length());
                     this->serializeNodes(writeBuffer);
@@ -372,7 +390,7 @@ virtualHomee::virtualHomee()
     mac.replace(":", "");
     this->value.homeeId = mac;
     this->value.version = "2.25.0 (ed9c50)";
-    this->nds.AddNode(new node(-1, 1, "homee"));
+    this->addNode(new node(-1, 1, "homee"));
 }
 
 virtualHomee::~virtualHomee()
@@ -391,13 +409,13 @@ size_t virtualHomee::measureSerializeNodes()
 void virtualHomee::serializeNodes(Print& outputStream)
 {
     outputStream.print("{\"nodes\":[");
-    for(int i = 0; i < nds.GetNumberOfNodes(); i++)
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
     {
         if(i > 0)
         {
             outputStream.print(',');
         }
-        nds.GetNode(i)->serializeNode(outputStream);
+        this->getNode(i)->serializeNode(outputStream);
     }
     outputStream.print("]}");
 }

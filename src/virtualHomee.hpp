@@ -19,7 +19,7 @@
 
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
-#include "virtualHomee/nodes.hpp"
+#include "virtualHomee/node.hpp"
 
 #include "virtualHomee/MeasureBuffer.h"
 #include "virtualHomee/WriteBuffer.h"
@@ -29,6 +29,9 @@ struct virtualHomeeValues
     String homeeId;
     String version;
     const char *access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
+
+    node *nodes[MAX_NUMBER_OF_NODES];
+    uint8_t numberOfNodes = 0;
 };
 class virtualHomee
 {
@@ -36,14 +39,18 @@ public:
     void start();
     void addNode(node *n);
     node *getNodeById(int32_t node_id);
+    node *getNode(uint8_t n);
+    uint8_t GetNumberOfNodes();
     nodeAttributes *getAttributeById(uint32_t _id);
+    String getHomeeId();
+    void setHomeeId(const String &_homeeId);
+
     void updateAttribute(nodeAttributes *_nodeAttribute);
     void updateAttributeValue(nodeAttributes *_nodeAttribute, double _newValue);
     void updateAttributeData(nodeAttributes *_nodeAttribute, const String &_data);
     void updateNode(node *_node);
+
     size_t getNumberOfWSClients();
-    String getHomeeId();
-    void setHomeeId(const String &_homeeId);
 
     size_t measureSerializeNodes();
     void serializeNodes(Print &outputStream);
@@ -58,8 +65,6 @@ private:
     AsyncWebServer server;
     AsyncWebSocket ws;
     AsyncUDP udp;
-
-    nodes nds;
 
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
