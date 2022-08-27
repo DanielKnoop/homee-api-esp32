@@ -1,4 +1,4 @@
-#if  defined(EXAMPLE_BUILD)
+#if defined(EXAMPLE_BUILD)
 
 #include <Arduino.h>
 #include "virtualHomee.hpp"
@@ -10,44 +10,46 @@
 #endif
 
 #ifndef pSSID
-  #define pSSID "WLAN"
+#define pSSID "WLAN"
 #endif
 
 #ifndef pWLANPASSWORD
-  #define pWLANPASSWORD "PASSWORD"
+#define pWLANPASSWORD "PASSWORD"
 #endif
 
-const char* ssid = pSSID;
-const char* password = pWLANPASSWORD;
+const char *ssid = pSSID;
+const char *password = pWLANPASSWORD;
 
-const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec = 3600;
-const int   daylightOffset_sec = 3600;
+const char *ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 3600;
+const int daylightOffset_sec = 3600;
 
 virtualHomee vhih("esp1");
 
-nodeAttributes* na1;
-nodeAttributes* na2;
+nodeAttributes *na1;
+nodeAttributes *na2;
 
-nodeAttributes* schalterAttribute;
+nodeAttributes *schalterAttribute;
 
-void attributeCallbackFunction(nodeAttributes* attribute)
+void attributeCallbackFunction(nodeAttributes *attribute)
 {
-  //int32_t nodeId = attribute->getNodeId();
-  //uint32_t attributeId = attribute->getId();
+  // int32_t nodeId = attribute->getNodeId();
+  // uint32_t attributeId = attribute->getId();
 
   attribute->setCurrentValue(attribute->getTargetValue());
   vhih.updateAttribute(attribute);
 }
 
-void setup() {
-  //homee homee("homee-mac", "Benutzer", "Password");
+void setup()
+{
+  // homee homee("homee-mac", "Benutzer", "Password");
   randomSeed(analogRead(0));
 
   Serial.begin(115200);
 
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -56,10 +58,9 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-
-  node* n1 = new node(10, 3001, "Luftsensor"); //CANodeProfileTemperatureAndHumiditySensor
-  na1 = n1->AddAttributes(new nodeAttributes(5)); //CAAttributeTypeTemperature
-  na2 = n1->AddAttributes(new nodeAttributes(7)); //CAAttributeTypeRelativeHumidity
+  node *n1 = new node(10, 3001, "Luftsensor");    // CANodeProfileTemperatureAndHumiditySensor
+  na1 = n1->AddAttributes(new nodeAttributes(5)); // CAAttributeTypeTemperature
+  na2 = n1->AddAttributes(new nodeAttributes(7)); // CAAttributeTypeRelativeHumidity
 
   na1->setUnit("°C");
   na1->setMinimumValue(-20);
@@ -67,7 +68,7 @@ void setup() {
   na1->setCurrentValue(21);
   na2->setUnit("%");
 
-  node* n2 = new node(20, 10, "Schalter");
+  node *n2 = new node(20, 10, "Schalter");
   schalterAttribute = n2->AddAttributes(new nodeAttributes(1, 200));
   schalterAttribute->setEditable(1);
   schalterAttribute->setMinimumValue(0);
@@ -90,26 +91,24 @@ void setup() {
 u_int64_t lastMillis = 0;
 u_int64_t duration = 30000;
 
-void loop() {
+void loop()
+{
   u_int64_t currentMillis = millis();
-  if(lastMillis + duration < currentMillis)
+  if (lastMillis + duration < currentMillis)
   {
     lastMillis = currentMillis;
     double_t randValue = random(-15, 15) / 10.0;
     double_t newValue = na1->getCurrentValue() + randValue;
-    if(newValue < na1->getMinimumValue())
+    if (newValue < na1->getMinimumValue())
     {
       newValue = na1->getMinimumValue();
     }
-    if(newValue > na1->getMaximumValue())
+    if (newValue > na1->getMaximumValue())
     {
       newValue = na1->getMaximumValue();
     }
     vhih.updateAttributeValue(na1, newValue);
-
-    Serial.print("MeasuresSize: ");
-    Serial.println(vhih.measureSerializeNodes());
-
+    vhih.updateNode(vhih.getNodeById(na1->getNodeId()));
   }
 }
 #endif
