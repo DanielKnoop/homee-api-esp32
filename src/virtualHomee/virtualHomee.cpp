@@ -1,40 +1,5 @@
 #include "virtualHomee.hpp"
 
-void virtualHomee::getSettings(JsonObject jsonDoc)
-{
-    jsonDoc["settings"]["address"] = "";
-    jsonDoc["settings"]["city"] = "";
-    jsonDoc["settings"]["zip"] = 11111;
-    jsonDoc["settings"]["state"] = F("BW");
-    jsonDoc["settings"]["latitude"] = "";
-    jsonDoc["settings"]["longitude"] = "";
-    jsonDoc["settings"]["country"] = F("Germany");
-    jsonDoc["settings"]["language"] = F("de");
-    jsonDoc["settings"]["wlan_dhcp"] = 1;
-    jsonDoc["settings"]["remote_access"] = 1;
-    jsonDoc["settings"]["beta"] = 0;
-    jsonDoc["settings"]["webhooks_key"] = F("WEBHOOKKEY");
-    jsonDoc["settings"]["automatic_location_detection"] = 0;
-    jsonDoc["settings"]["polling_interval"] = 60;
-    jsonDoc["settings"]["timezone"] = F("Europe%2FBerlin");
-    jsonDoc["settings"]["enable_analytics"] = 0;
-    jsonDoc["settings"]["wlan_enabled"] = 1;
-    jsonDoc["settings"]["wlan_ip_address"] = F("192.168.178.222");
-    jsonDoc["settings"]["wlan_ssid"] = F("homeeWifi");
-    jsonDoc["settings"]["wlan_mode"] = 2;
-    jsonDoc["settings"]["online"] = 0;
-    jsonDoc["settings"]["lan_enabled"] = 1;
-    jsonDoc["settings"].createNestedArray("available_ssids").add("homeeWifi");
-    jsonDoc["settings"]["time"] = 1562707105;
-    jsonDoc["settings"]["civil_time"] = F("2019-07-09 23:18:25");
-    jsonDoc["settings"]["version"] = this->value.version;
-    jsonDoc["settings"]["uid"] = this->value.homeeId;
-    jsonDoc["settings"]["gateway_id"] = 1313337;
-    jsonDoc["settings"]["local_ssl_enabled"] = false;
-    jsonDoc["settings"]["b2b_partner"] = F("homee");
-    jsonDoc["settings"]["homee_name"] = this->value.homeeId;
-    jsonDoc["settings"].createNestedArray("cubes");
-}
 
 uint8_t virtualHomee::GetNumberOfNodes()
 {
@@ -140,8 +105,8 @@ void virtualHomee::handleHttpPostRequest(virtualHomee *context, AsyncWebServerRe
     AsyncWebServerResponse *response = request->beginResponse(200, "application/x-www-form-urlencoded", _buff);
 
     sprintf_P(_buff, PSTR("access_token=%s;Max-Age=2592000;"), context->value.access_token);
-    response->addHeader("set-cookie", _buff);
 
+    response->addHeader("set-cookie", _buff);
     request->send(response);
 }
 
@@ -188,16 +153,7 @@ void virtualHomee::initializeWebsocketServer()
                 Serial.print("DEBUG: Received Message: ");
                 Serial.println(message);
 #endif
-                if (message.equalsIgnoreCase("GET:Settings"))
-                {                 
-                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer();
-                    JsonVariant doc = jsonBuffer->getRoot();
-                    this->getSettings(doc);
-
-                    this->sendWSMessage(jsonBuffer, client);
-                    
-                }
-                else if (message.equalsIgnoreCase("GET:nodes"))
+                if (message.equalsIgnoreCase("GET:nodes"))
                 {  
                     size_t size = this->measureSerializeNodes();
 
@@ -270,7 +226,7 @@ void virtualHomee::start()
 void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer *jsonBuffer, AsyncWebSocketClient *client)
 {
 #ifdef DEBUG_VIRTUAL_HOMEE
-    Serial.print("DEBUG: Send Message: ");
+    Serial.print("DEBUG: Send JsonBuffer Message: ");
     Serial.println(measureJson(jsonBuffer->getRoot()));
     // serializeJsonPretty(jsonBuffer->getRoot(), Serial);
     Serial.println();

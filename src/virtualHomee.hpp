@@ -66,7 +66,6 @@ private:
     AsyncWebSocket ws;
     AsyncUDP udp;
 
-    void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
     String getUrlParameterValue(const String &url, const String &parameterName);
     String gethomeeId();
