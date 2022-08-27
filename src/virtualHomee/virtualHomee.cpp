@@ -238,38 +238,18 @@ void virtualHomee::initializeWebsocketServer()
                 {
                     if (message.indexOf("compatibility_check=1") >= 0)
                     {
-                        AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 200);
-                        JsonVariant jsonDoc = jsonBuffer->getRoot();
-                        jsonDoc["compatibility_check"]["compatible"] = true;
-                        jsonDoc["compatibility_check"]["account"] = true;
-                        jsonDoc["compatibility_check"]["external_homee_status"] = F("none");
-                        jsonDoc["compatibility_check"]["your_version"] = true;
-                        jsonDoc["compatibility_check"]["my_version"] = this->value.version;
-                        jsonDoc["compatibility_check"]["my_homeeID"] = this->value.homeeId;
-
-                        this->sendWSMessage(jsonBuffer, client);
+                        client->printf("{\"compatibility_check\":{\"compatible\":true,\"account\":true,\"external_homee_status\":\"none\",\"your_version\":true,\"my_version\":\"%s\",\"my_homeeID\":\"%s\"}}",
+                            this->value.version.c_str(), this->value.homeeId.c_str());
                     }
                     else if (message.indexOf("start_pairing=1") >= 0)
                     {
-                        AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 200);
-                        JsonVariant jsonDoc = jsonBuffer->getRoot();
-                        jsonDoc["pairing"]["access_token"] = this->value.access_token;
-                        jsonDoc["pairing"]["expires"] = 315360000;
-                        jsonDoc["pairing"]["userID"] = 1;
-                        jsonDoc["pairing"]["deviceID"] = 1;
-
-                        this->sendWSMessage(jsonBuffer, client);
+                        client->printf("{\"pairing\":{\"access_token\":\"%s\",\"expires\":315360000,\"userID\":1,\"deviceID\":1}}",
+                            this->value.access_token);
                     }
                 }
                 else if (message == "DELETE:users/1/devices/1")
                 {
-                    AsyncWebSocketJsonBuffer * jsonBuffer = ws.makeJsonBuffer(false, 150);
-                    JsonVariant jsonDoc = jsonBuffer->getRoot();
-                    jsonDoc["warning"]["code"] = 600;
-                    jsonDoc["warning"]["description"] = F("Your device got removed.");
-                    jsonDoc["warning"]["message"] = F("You have been logged out.");
-                    jsonDoc["warning"]["data"] = serialized("{}");
-                    this->sendWSMessage(jsonBuffer, client);
+                    client->text(F("{\"warning\":{\"code\":600,\"description\":\"Your device got removed.\",\"message\":\"You have been logged out.\",\"data\":{}}}"));
                     client->close(4444, "DEVICE_DISCONNECT");
                 }
             }
