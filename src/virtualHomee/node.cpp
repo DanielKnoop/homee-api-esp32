@@ -2,8 +2,8 @@
 
 size_t node::size()
 {
-    size_t s = 325 + this->name.length() + this->phonetic_name.length() 
-        + this->image.length() + this->note.length() ;
+    size_t s = 325 + this->value.name.length() + this->value.phonetic_name.length() 
+        + this->value.image.length() + this->value.note.length() ;
     for(uint8_t i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         s += this->GetAttribute(i)->size();
@@ -13,23 +13,23 @@ size_t node::size()
 
 uint8_t node::GetNumberOfAttributes()
 {
-    return this->numberOfAttributes;
+    return this->value.numberOfAttributes;
 }
 
 nodeAttributes* node::GetAttribute(uint8_t n)
 {
     if(n < this->GetNumberOfAttributes())
     {
-        return attributes[n];
+        return value.attributes[n];
     }
     return nullptr;
 }
 
 node::node(uint32_t id, uint32_t profile, const String& name)
 {
-    this->id = id;
-    this->name = name;
-    this->profile = profile;
+    this->value.id = id;
+    this->value.name = name;
+    this->value.profile = profile;
 }
 
 uint8_t node::calculateNextInstance(uint16_t _type)
@@ -37,7 +37,7 @@ uint8_t node::calculateNextInstance(uint16_t _type)
     uint8_t occurrence = 0;
     for (int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
-        if(attributes[i]->getType() == _type)
+        if(value.attributes[i]->getType() == _type)
         {
             occurrence++;
         }
@@ -49,41 +49,41 @@ nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
 {
     if(this->GetNumberOfAttributes() > MAX_NUMBER_OF_ATTRIBUTES)
         return nullptr;
-    attributes->setNodeId(this->id);
+    attributes->setNodeId(this->value.id);
     if(attributes->getId() == 0)
     {
-        attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->id);
+        attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->value.id);
     }
     attributes->setInstance(this->calculateNextInstance(attributes->getType()));
-    this->attributes[this->numberOfAttributes++] = attributes;
+    this->value.attributes[this->value.numberOfAttributes++] = attributes;
     return attributes;
 }
 
 void node::AddJSONObject(JsonObject jsonObject)
 {
-    jsonObject["id"] = this->id;
-    jsonObject["name"] = this->name;
-    jsonObject["profile"] = this->profile;
-    jsonObject["image"] = this->image;
-    jsonObject["favorite"] = this->favorite;
-    jsonObject["order"] = this->order;
-    jsonObject["protocol"] = this->protocol;
-    jsonObject["routing"] = this->routing;
-    jsonObject["state"] = this->state;
-    jsonObject["state_changed"] = this->state_changed;
-    jsonObject["added"] = this->added;
-    jsonObject["history"] = this->history;
-    jsonObject["cube_type"] = this->cube_type;
-    jsonObject["note"] = this->note;
-    jsonObject["services"] = this->services;
-    jsonObject["phonetic_name"] = this->phonetic_name;
-    jsonObject["owner"] = this->owner;
-    jsonObject["security"] = this->security;
+    jsonObject["id"] = this->value.id;
+    jsonObject["name"] = this->value.name;
+    jsonObject["profile"] = this->value.profile;
+    jsonObject["image"] = this->value.image;
+    jsonObject["favorite"] = this->value.favorite;
+    jsonObject["order"] = this->value.order;
+    jsonObject["protocol"] = this->value.protocol;
+    jsonObject["routing"] = this->value.routing;
+    jsonObject["state"] = this->value.state;
+    jsonObject["state_changed"] = this->value.state_changed;
+    jsonObject["added"] = this->value.added;
+    jsonObject["history"] = this->value.history;
+    jsonObject["cube_type"] = this->value.cube_type;
+    jsonObject["note"] = this->value.note;
+    jsonObject["services"] = this->value.services;
+    jsonObject["phonetic_name"] = this->value.phonetic_name;
+    jsonObject["owner"] = this->value.owner;
+    jsonObject["security"] = this->value.security;
     JsonArray attributes = jsonObject.createNestedArray("attributes");
-    for(int i = 0; i < this->numberOfAttributes; i++)
+    for(int i = 0; i < this->value.numberOfAttributes; i++)
     {
         JsonObject attribute = attributes.createNestedObject();
-        this->attributes[i]->GetJSONObject(attribute);
+        this->value.attributes[i]->GetJSONObject(attribute);
     }    
 }
 
@@ -95,27 +95,27 @@ void node::AddJSONArrayElement(JsonArray jsonArray)
 
 String node::getImage() 
 {
-    return this->image;
+    return this->value.image;
 }
 
 void node::setImage(String _image)
 {
-    this->image = _image;
+    this->value.image = _image;
 }
 
 node::~node()
 {
     for(int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
-        delete attributes[i];
-        attributes[i] = nullptr;
+        delete value.attributes[i];
+        value.attributes[i] = nullptr;
     }
 }
 
 void node::setState(uint8_t _state)
 {
-    this->state = _state;
-    this->state_changed = getTimestamp();
+    this->value.state = _state;
+    this->value.state_changed = getTimestamp();
 }
 
 uint32_t node::getTimestamp()
@@ -126,10 +126,25 @@ uint32_t node::getTimestamp()
 
 void node::serializeNode(Print& outputStream)
 {
-    //{"id":-1,"name":"homee","profile":1,"image":"default","favorite":0,"order":1,"protocol":3,"routing":0,"state":1,"state_changed":1618853497,"added":1618853497,"history":0,"cube_type":3,"note":"","services":4,"phonetic_name":"","owner":1,"security":0,"attributes":[]}
-
     outputStream.printf("{\"id\":%d,\"name\":\"%s\",\"profile\":%d,\"image\":\"%s\",\"favorite\":%d,\"order\":%d,\"protocol\":%d,\"routing\":%d,\"state\":%d,\"state_changed\":%d,\"added\":%d,\"history\":%d,\"cube_type\":%d,\"note\":\"%s\",\"services\":%d,\"phonetic_name\":\"%s\",\"owner\":%d,\"security\":%d,\"attributes\":[", 
-        this->id, this->name.c_str(), this->profile, this->image.c_str(), this->favorite, this->order, this->protocol, this->routing, this->state, this->state_changed, this->added, this->history, this->cube_type, this->note.c_str(), this->services, this->phonetic_name.c_str(), this->owner, this->security);
+        this->value.id, 
+        this->value.name.c_str(), 
+        this->value.profile, 
+        this->value.image.c_str(), 
+        this->value.favorite, 
+        this->value.order, 
+        this->value.protocol, 
+        this->value.routing, 
+        this->value.state, 
+        this->value.state_changed, 
+        this->value.added, 
+        this->value.history, 
+        this->value.cube_type, 
+        this->value.note.c_str(), 
+        this->value.services, 
+        this->value.phonetic_name.c_str(), 
+        this->value.owner, 
+        this->value.security);
     for(int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         if(i > 0)

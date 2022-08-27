@@ -6,25 +6,8 @@
 #define MAX_NUMBER_OF_NODES 99
 #define MAX_NUMBER_OF_ATTRIBUTES 30
 
-class node
+struct nodeValues
 {
-    public:
-        node(uint32_t id, uint32_t profile, const String& name);
-        ~node();
-        
-        nodeAttributes* AddAttributes(nodeAttributes* attributes);
-        uint8_t GetNumberOfAttributes();
-        nodeAttributes* GetAttribute(uint8_t n);
-
-        void setImage(String _image);
-        String getImage();
-        int32_t getId() {return id;};
-        void setState(uint8_t _state);
-        uint8_t getState() { return this->state; };
-        void setNote(String _note) { this->note = _note; }
-        String getNote() { return this->note; }
-
-    private:
         int32_t id = 0;
         String name = ""; 
         uint32_t profile = 0;
@@ -45,6 +28,29 @@ class node
         uint8_t security = 0;
         nodeAttributes* attributes[MAX_NUMBER_OF_ATTRIBUTES];
         uint8_t numberOfAttributes = 0;
+};
+
+class node
+{
+    public:
+        node(uint32_t id, uint32_t profile, const String& name);
+        ~node();
+        
+        nodeAttributes* AddAttributes(nodeAttributes* attributes);
+        uint8_t GetNumberOfAttributes();
+        nodeAttributes* GetAttribute(uint8_t n);
+
+        void setImage(String _image);
+        String getImage();
+        int32_t getId() {return value.id;};
+        void setState(uint8_t _state);
+        uint8_t getState() { return this->value.state; };
+        void setNote(String _note) { this->value.note = _note; }
+        String getNote() { return this->value.note; }
+
+    private:
+
+        nodeValues value;
 
         uint8_t calculateNextInstance(uint16_t _type);
         uint32_t getTimestamp();
