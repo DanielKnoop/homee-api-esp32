@@ -68,7 +68,6 @@ private:
 
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
-    nodeAttributes *getAttributeWithId(uint32_t id);
     String getUrlParameterValue(const String &url, const String &parameterName);
     String gethomeeId();
     void sendWSMessage(AsyncWebSocketJsonBuffer *jsonBuffer, AsyncWebSocketClient *client);

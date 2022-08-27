@@ -61,21 +61,6 @@ node* virtualHomee::getNodeById(int32_t node_id)
     return nullptr;
 }
 
-nodeAttributes *virtualHomee::getAttributeWithId(uint32_t id)
-{
-    for (uint8_t i = 0; i < this->GetNumberOfNodes(); i++)
-    {
-        for (uint8_t j = 0; j < this->getNode(i)->GetNumberOfAttributes(); j++)
-        {
-            if (this->getNode(i)->GetAttribute(j)->getId() == id)
-            {
-                return this->getNode(i)->GetAttribute(j);
-            }
-        }
-    }
-    return nullptr;
-}
-
 node *virtualHomee::getNode(uint8_t n)
 {
     return this->value.nodes[n];
@@ -229,7 +214,7 @@ void virtualHomee::initializeWebsocketServer()
                     Serial.print("Target Value: ");
                     Serial.println(targetValue);
 #endif
-                    nodeAttributes *changedNode = this->getAttributeWithId(attributeId);
+                    nodeAttributes *changedNode = this->getAttributeById(attributeId);
                     if (changedNode != nullptr)
                     {
                         changedNode->setTargetValue(targetValue);
