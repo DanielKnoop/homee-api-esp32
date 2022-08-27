@@ -34,7 +34,6 @@ void virtualHomee::getSettings(JsonObject jsonDoc)
     jsonDoc["settings"]["b2b_partner"] = F("homee");
     jsonDoc["settings"]["homee_name"] = this->value.homeeId;
     jsonDoc["settings"].createNestedArray("cubes");
-
 }
 
 uint8_t virtualHomee::GetNumberOfNodes()
@@ -42,18 +41,18 @@ uint8_t virtualHomee::GetNumberOfNodes()
     return this->value.numberOfNodes;
 }
 
-void virtualHomee::addNode(node* n)
+void virtualHomee::addNode(node *n)
 {
-    if(this->value.numberOfNodes > MAX_NUMBER_OF_NODES)
+    if (this->value.numberOfNodes > MAX_NUMBER_OF_NODES)
         return;
     this->value.nodes[this->value.numberOfNodes++] = n;
 }
 
-node* virtualHomee::getNodeById(int32_t node_id)
+node *virtualHomee::getNodeById(int32_t node_id)
 {
-    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    for (int i = 0; i < this->GetNumberOfNodes(); i++)
     {
-        if(this->getNode(i)->getId() == node_id)
+        if (this->getNode(i)->getId() == node_id)
         {
             return this->getNode(i);
         }
@@ -63,13 +62,20 @@ node* virtualHomee::getNodeById(int32_t node_id)
 
 node *virtualHomee::getNode(uint8_t n)
 {
-    return this->value.nodes[n];
+    if (n < this->GetNumberOfNodes())
+    {
+        return this->value.nodes[n];
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
 {
     ws.cleanupClients();
-    AsyncWebSocketJsonBuffer* buffer = ws.makeJsonBuffer(false, _nodeAttribute->size());
+    AsyncWebSocketJsonBuffer *buffer = ws.makeJsonBuffer(false, _nodeAttribute->size());
     JsonVariant doc = buffer->getRoot();
     JsonObject attribute = doc.createNestedObject("attribute");
     _nodeAttribute->GetJSONObject(attribute);
@@ -77,10 +83,10 @@ void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
     ws.textAll(buffer);
 }
 
-void virtualHomee::updateNode(node* _node)
+void virtualHomee::updateNode(node *_node)
 {
     ws.cleanupClients();
-    AsyncWebSocketJsonBuffer* buffer = ws.makeJsonBuffer(false, _node->size());
+    AsyncWebSocketJsonBuffer *buffer = ws.makeJsonBuffer(false, _node->size());
     JsonVariant doc = buffer->getRoot();
     JsonObject node = doc.createNestedObject("node");
     _node->AddJSONObject(node);
@@ -88,7 +94,7 @@ void virtualHomee::updateNode(node* _node)
     ws.textAll(buffer);
 }
 
-String virtualHomee::getUrlParameterValue(const String& url, const String& parameterName)
+String virtualHomee::getUrlParameterValue(const String &url, const String &parameterName)
 {
     int index = url.indexOf(parameterName + "=");
     String substr = url.substring(index + parameterName.length() + 1);
@@ -103,13 +109,13 @@ String virtualHomee::getUrlParameterValue(const String& url, const String& param
     }
 }
 
-nodeAttributes* virtualHomee::getAttributeById(uint32_t _id)
+nodeAttributes *virtualHomee::getAttributeById(uint32_t _id)
 {
-    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    for (int i = 0; i < this->GetNumberOfNodes(); i++)
     {
-        for(int j = 0; j < this->getNode(i)->GetNumberOfAttributes(); j++)
+        for (int j = 0; j < this->getNode(i)->GetNumberOfAttributes(); j++)
         {
-            if(this->getNode(i)->GetAttribute(j)->getId() == _id)
+            if (this->getNode(i)->GetAttribute(j)->getId() == _id)
             {
                 return this->getNode(i)->GetAttribute(j);
             }
@@ -126,8 +132,8 @@ void virtualHomee::handleHttpOptionsAccessToken(AsyncWebServerRequest *request)
     request->send(response);
 }
 
-void virtualHomee::handleHttpPostRequest(virtualHomee* context, AsyncWebServerRequest *request)
-{ 
+void virtualHomee::handleHttpPostRequest(virtualHomee *context, AsyncWebServerRequest *request)
+{
     char _buff[128];
 
     sprintf_P(_buff, PSTR("access_token=%s&user_id=1&device_id=1&expires=31536000"), context->value.access_token);
@@ -143,12 +149,13 @@ void virtualHomee::initializeWebServer()
 {
     server.on("/access_token", HTTP_OPTIONS, handleHttpOptionsAccessToken);
     server.on("/access_token", HTTP_DELETE, [](AsyncWebServerRequest *request) {});
-    server.on("/access_token", HTTP_POST, [this](AsyncWebServerRequest *request){handleHttpPostRequest(this, request);});
+    server.on("/access_token", HTTP_POST, [this](AsyncWebServerRequest *request)
+              { handleHttpPostRequest(this, request); });
 }
 void virtualHomee::initializeWebsocketServer()
 {
     ws.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
-    {
+               {
         if (type == WS_EVT_CONNECT)
         {
             this->clientConnected();
@@ -267,9 +274,7 @@ void virtualHomee::initializeWebsocketServer()
                 }
             }
         }
-        ws.cleanupClients();
-    });
-
+        ws.cleanupClients(); });
 }
 
 void virtualHomee::start()
@@ -282,12 +287,12 @@ void virtualHomee::start()
     this->startDiscoveryService();
 }
 
-void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client)
-{ 
+void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer *jsonBuffer, AsyncWebSocketClient *client)
+{
 #ifdef DEBUG_VIRTUAL_HOMEE
     Serial.print("DEBUG: Send Message: ");
     Serial.println(measureJson(jsonBuffer->getRoot()));
-    //serializeJsonPretty(jsonBuffer->getRoot(), Serial);
+    // serializeJsonPretty(jsonBuffer->getRoot(), Serial);
     Serial.println();
 #endif
     jsonBuffer->setLength();
@@ -303,7 +308,7 @@ void virtualHomee::startDiscoveryService()
         Serial.println(WiFi.localIP());
 #endif
         udp.onPacket([this](AsyncUDPPacket packet)
-        {
+                     {
             String message = packet.readString();
 #ifdef DEBUG_VIRTUAL_HOMEE
             Serial.print("UDP Message reveived: ");
@@ -313,8 +318,7 @@ void virtualHomee::startDiscoveryService()
             if (message.equalsIgnoreCase(this->gethomeeId()))
             {
                 packet.printf("initialized:%s:%s:homee", this->gethomeeId().c_str(), this->gethomeeId().c_str());
-            }
-        });
+            } });
     }
 }
 
@@ -326,7 +330,7 @@ void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _valu
     this->updateAttribute(_attribute);
 }
 
-void virtualHomee::updateAttributeData(nodeAttributes* _attribute, const String& _data)
+void virtualHomee::updateAttributeData(nodeAttributes *_attribute, const String &_data)
 {
     _attribute->setData(_data);
     this->updateAttribute(_attribute);
@@ -356,12 +360,12 @@ String virtualHomee::getHomeeId()
 {
     return this->value.homeeId;
 }
-void virtualHomee::setHomeeId(const String& _homeeId)
+void virtualHomee::setHomeeId(const String &_homeeId)
 {
     this->value.homeeId = _homeeId;
 }
 
-virtualHomee::virtualHomee(const String& _homeeId)
+virtualHomee::virtualHomee(const String &_homeeId)
     : virtualHomee()
 {
     this->value.homeeId = _homeeId;
@@ -391,12 +395,12 @@ size_t virtualHomee::measureSerializeNodes()
     return buffer.size();
 }
 
-void virtualHomee::serializeNodes(Print& outputStream)
+void virtualHomee::serializeNodes(Print &outputStream)
 {
     outputStream.print("{\"nodes\":[");
-    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    for (int i = 0; i < this->GetNumberOfNodes(); i++)
     {
-        if(i > 0)
+        if (i > 0)
         {
             outputStream.print(',');
         }
