@@ -179,7 +179,9 @@ void virtualHomee::initializeWebsocketServer()
 #endif
                 if (message.equalsIgnoreCase("GET:nodes"))
                 {  
-                    size_t size = this->measureSerializeNodes();
+                    MeasureBuffer measure;
+                    this->value.serialize(measure);
+                    size_t size = measure.size();                 
 
 #ifdef DEBUG_VIRTUAL_HOMEE
                     Serial.print("DEBUG: Reserve Buffer Size: ");
@@ -187,8 +189,8 @@ void virtualHomee::initializeWebsocketServer()
 #endif 
                     AsyncWebSocketMessageBuffer * buffer = ws.makeBuffer(size);
                     WriteBuffer writeBuffer(buffer->get(), buffer->length());
-                    this->serializeNodes(writeBuffer);
-                    client->text(buffer);
+                    this->value.serialize(writeBuffer);
+                    client->text(buffer);   
                 }
                 else if(message.equalsIgnoreCase("get:settings"))
                 {
@@ -341,26 +343,4 @@ virtualHomee::virtualHomee()
 virtualHomee::~virtualHomee()
 {
     ws.closeAll();
-}
-
-size_t virtualHomee::measureSerializeNodes()
-{
-    MeasureBuffer buffer;
-    this->serializeNodes(buffer);
-
-    return buffer.size();
-}
-
-void virtualHomee::serializeNodes(Print &outputStream)
-{
-    outputStream.print("{\"nodes\":[");
-    for (int i = 0; i < this->GetNumberOfNodes(); i++)
-    {
-        if (i > 0)
-        {
-            outputStream.print(',');
-        }
-        this->getNode(i)->value.serialize(outputStream);
-    }
-    outputStream.print("]}");
 }

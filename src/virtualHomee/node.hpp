@@ -90,4 +90,5 @@ class node
 
         friend class virtualHomee;
         friend class nodes;
+        friend class virtualHomeeValues;
 };
