@@ -190,6 +190,16 @@ void virtualHomee::initializeWebsocketServer()
                     this->serializeNodes(writeBuffer);
                     client->text(buffer);
                 }
+                else if(message.equalsIgnoreCase("get:settings"))
+                {
+                    MeasureBuffer measure;
+                    this->settings.serialize(measure);
+                    size_t size = measure.size();
+                    AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(size);
+                    WriteBuffer writeBuffer(buffer->get(), buffer->length());
+                    this->settings.serialize(writeBuffer);
+                    client->text(buffer);
+                }
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {
                     int32_t attributeId = this->getUrlParameterValue(message, "IDs").toInt();
@@ -263,9 +273,9 @@ void virtualHomee::startDiscoveryService()
             Serial.println(message);
 #endif
 
-            if (message.equalsIgnoreCase(this->gethomeeId()))
+            if (message.equalsIgnoreCase(this->getHomeeId()))
             {
-                packet.printf("initialized:%s:%s:homee", this->gethomeeId().c_str(), this->gethomeeId().c_str());
+                packet.printf("initialized:%s:%s:homee", this->getHomeeId().c_str(), this->getHomeeId().c_str());
             } });
     }
 }
@@ -285,11 +295,6 @@ void virtualHomee::updateAttributeData(nodeAttributes *_attribute, const String 
     _attribute->setData(_data);
     this->updateAttribute(_attribute);
     yield();
-}
-
-String virtualHomee::gethomeeId()
-{
-    return this->value.homeeId;
 }
 
 void virtualHomee::clientConnected()
