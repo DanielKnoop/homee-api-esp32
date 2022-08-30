@@ -247,18 +247,6 @@ void virtualHomee::start()
     this->startDiscoveryService();
 }
 
-void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer *jsonBuffer, AsyncWebSocketClient *client)
-{
-#ifdef DEBUG_VIRTUAL_HOMEE
-    Serial.print("DEBUG: Send JsonBuffer Message: ");
-    Serial.println(measureJson(jsonBuffer->getRoot()));
-    // serializeJsonPretty(jsonBuffer->getRoot(), Serial);
-    Serial.println();
-#endif
-    jsonBuffer->setLength();
-    client->text(jsonBuffer);
-}
-
 void virtualHomee::startDiscoveryService()
 {
     if (udp.listen(15263))

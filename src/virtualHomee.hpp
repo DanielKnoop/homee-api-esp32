@@ -65,7 +65,6 @@ private:
     void startDiscoveryService();
     String getUrlParameterValue(const String &url, const String &parameterName);
     String gethomeeId();
-    void sendWSMessage(AsyncWebSocketJsonBuffer *jsonBuffer, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
     void clientConnected();
     void clientDisconnected();
