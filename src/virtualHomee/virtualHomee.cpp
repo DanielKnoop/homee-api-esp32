@@ -3,14 +3,12 @@
 
 uint8_t virtualHomee::GetNumberOfNodes()
 {
-    return this->value.numberOfNodes;
+    return this->value.nodes.size();
 }
 
 void virtualHomee::addNode(node *n)
 {
-    if (this->value.numberOfNodes > MAX_NUMBER_OF_NODES)
-        return;
-    this->value.nodes[this->value.numberOfNodes++] = n;
+    this->value.nodes.push_back(n);
 }
 
 node *virtualHomee::getNodeById(int32_t node_id)
@@ -190,7 +188,7 @@ void virtualHomee::initializeWebsocketServer()
                     AsyncWebSocketMessageBuffer * buffer = ws.makeBuffer(size);
                     WriteBuffer writeBuffer(buffer->get(), buffer->length());
                     this->value.serialize(writeBuffer);
-                    client->text(buffer);   
+                    client->text(buffer);
                 }
                 else if(message.equalsIgnoreCase("get:settings"))
                 {

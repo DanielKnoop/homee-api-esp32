@@ -2,7 +2,7 @@
 
 uint8_t node::GetNumberOfAttributes()
 {
-    return this->value.numberOfAttributes;
+    return this->value.attributes.size();
 }
 
 nodeAttributes* node::GetAttribute(uint8_t n)
@@ -34,18 +34,16 @@ uint8_t node::calculateNextInstance(uint16_t _type)
     return occurrence;
 }
 
-nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
+nodeAttributes* node::AddAttributes(nodeAttributes* attribute)
 {
-    if(this->GetNumberOfAttributes() > MAX_NUMBER_OF_ATTRIBUTES)
-        return nullptr;
-    attributes->setNodeId(this->value.id);
-    if(attributes->getId() == 0)
+    attribute->setNodeId(this->value.id);
+    if(attribute->getId() == 0)
     {
-        attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->value.id);
+        attribute->setId(this->GetNumberOfAttributes() + (100 + 1) * this->value.id);
     }
-    attributes->setInstance(this->calculateNextInstance(attributes->getType()));
-    this->value.attributes[this->value.numberOfAttributes++] = attributes;
-    return attributes;
+    attribute->setInstance(this->calculateNextInstance(attribute->getType()));
+    this->value.attributes.push_back(attribute);
+    return attribute;
 }
 
 String node::getImage() 

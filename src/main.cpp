@@ -24,7 +24,7 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 
-virtualHomee vhih("esp1");
+virtualHomee vhih("esp2");
 
 nodeAttributes *na1;
 nodeAttributes *na2;
@@ -86,6 +86,16 @@ void setup()
   vhih.start();
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  Serial.print("Size of virtualHomeeValues: ");
+  Serial.println(sizeof(virtualHomeeValues));
+
+  Serial.print("Size of nodeValues: ");
+  Serial.println(sizeof(nodeValues));
+
+  Serial.print("Size of nodeAttributes: ");
+  Serial.println(sizeof(nodeAttributes));
+
 }
 
 u_int64_t lastMillis = 0;

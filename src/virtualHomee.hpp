@@ -25,13 +25,12 @@ struct virtualHomeeValues
     String homeeId;
     String version;
     const char *access_token = "iK8sd0SmfulPqbnsXYqqzebLrGb0tWjaNKFmt7jHfrz1Fkj1aRwJWWc7uFnElKjs";
-    node *nodes[MAX_NUMBER_OF_NODES];
-    uint8_t numberOfNodes = 0;
+    std::vector<node*> nodes;
 
     void serialize(Print &outputStream)
     {
     outputStream.print("{\"nodes\":[");
-    for (int i = 0; i < numberOfNodes; i++)
+    for (int i = 0; i < nodes.size(); i++) 
     {
         if (i > 0)
         {

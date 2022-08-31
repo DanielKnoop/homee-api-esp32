@@ -2,9 +2,7 @@
 
 #include <Arduino.h>
 #include "nodeattributes.hpp"
-
-#define MAX_NUMBER_OF_NODES 99
-#define MAX_NUMBER_OF_ATTRIBUTES 30
+#include <vector>
 
 struct nodeValues
 {
@@ -26,8 +24,7 @@ struct nodeValues
     String phonetic_name = "";
     uint8_t owner = 1;
     uint8_t security = 0;
-    nodeAttributes* attributes[MAX_NUMBER_OF_ATTRIBUTES];
-    uint8_t numberOfAttributes = 0;
+    std::vector<nodeAttributes*> attributes;
 
     void serialize(Print &outputStream)
     {
@@ -50,7 +47,7 @@ struct nodeValues
             this->phonetic_name.c_str(), 
             this->owner, 
             this->security);
-    for(int i = 0; i < numberOfAttributes; i++)
+    for(int i = 0; i < attributes.size(); i++)
     {
         if(i > 0)
         {
