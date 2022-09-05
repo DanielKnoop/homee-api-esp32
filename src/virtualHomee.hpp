@@ -46,7 +46,7 @@ struct virtualHomeeSettings
 {
     void serialize(Print &outputStream)
     {
-        outputStream.printf("{\"settings\":{\"address\":\"\",\"city\":\"\",\"zip\":\"\",\"state\":\"\",\"country\":\"\",\"language\":\"de\",\"remote_access\":1,\"webhooks_key\":\"\",\"automatic_location_detection\":0,\"polling_interval\":60.0,\"timezone\":\"Europe%2FBerlin\",\"homee_name\":\"WLAN\",\"latitude\":50,\"longitude\":7,\"b2b_partner\":\"homee\",\"enable_analytics\":0,\"beta\":0,\"local_ssl_enabled\":false,\"wlan_enabled\":0,\"wlan_ssid\":\"Homee\",\"wlan_mode\":2,\"internet_access\":true,\"lan_enabled\":1,\"lan_ip_address\":\"192.168.178.2\",\"available_ssids\":[],\"time\":1661883884,\"civil_time\":\"2022-08-30 20:24:4\",\"version\":\"2.37.1+75531af0\",\"uid\":\"\",\"cubes\":[],\"extensions\":{}}}");
+        outputStream.printf(PSTR("{\"settings\":{\"address\":\"\",\"city\":\"\",\"zip\":\"\",\"state\":\"\",\"country\":\"\",\"language\":\"de\",\"remote_access\":1,\"webhooks_key\":\"\",\"automatic_location_detection\":0,\"polling_interval\":60.0,\"timezone\":\"Europe%2FBerlin\",\"homee_name\":\"WLAN\",\"latitude\":50,\"longitude\":7,\"b2b_partner\":\"homee\",\"enable_analytics\":0,\"beta\":0,\"local_ssl_enabled\":false,\"wlan_enabled\":0,\"wlan_ssid\":\"Homee\",\"wlan_mode\":2,\"internet_access\":true,\"lan_enabled\":1,\"lan_ip_address\":\"192.168.178.2\",\"available_ssids\":[],\"time\":1661883884,\"civil_time\":\"2022-08-30 20:24:4\",\"version\":\"2.37.1+75531af0\",\"uid\":\"\",\"cubes\":[],\"extensions\":{}}}"));
     }
 };
 

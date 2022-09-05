@@ -47,12 +47,10 @@ void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
     size_t size = measure.size();
 
     AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(size);
-    buffer->lock();
     WriteBuffer writerBuffer(buffer->get(), buffer->length());
     writerBuffer.print("{\"attribute\":");
     _nodeAttribute->value.serialize(writerBuffer);
     writerBuffer.print("}");
-    buffer->unlock();
     yield();
     ws.textAll(buffer);
     yield();
@@ -70,12 +68,10 @@ void virtualHomee::updateNode(node *_node)
     size_t size = measure.size();
 
     AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(size);
-    buffer->lock();
     WriteBuffer writerBuffer(buffer->get(), buffer->length());
     writerBuffer.print("{\"node\":");
     _node->value.serialize(writerBuffer);
     writerBuffer.print("}");
-    buffer->unlock();
     yield();
     ws.textAll(buffer);
     yield();

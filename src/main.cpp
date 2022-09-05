@@ -76,10 +76,6 @@ void setup()
 
   schalterAttribute->setCallback(attributeCallbackFunction);
 
-  n2->AddAttributes(new nodeAttributes(1, 201));
-  n2->AddAttributes(new nodeAttributes(1, 202));
-  n2->AddAttributes(new nodeAttributes(1, 203));
-
   vhih.addNode(n1);
   vhih.addNode(n2);
 
