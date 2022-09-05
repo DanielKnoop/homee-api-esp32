@@ -76,10 +76,6 @@ void setup() {
 
   schalterAttribute->setCallback(attributeCallbackFunction);
 
-  n2->AddAttributes(new nodeAttributes(1, 201));
-  n2->AddAttributes(new nodeAttributes(1, 202));
-  n2->AddAttributes(new nodeAttributes(1, 203));
-
 
   node* n3 = new node(30, 1002, "Color Licht");
   nodeAttributes* a_on = n3->AddAttributes(new nodeAttributes(1));
