@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+//https://blog.benoitblanchon.fr/lightweight-float-to-string/
+
 void writeFloat(Print &outputStream, double value);
 void splitFloat(double value, uint32_t &integralPart,
                 uint32_t &decimalPart, int16_t &exponent) ;
