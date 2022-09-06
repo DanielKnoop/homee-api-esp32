@@ -51,9 +51,7 @@ void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
     writerBuffer.print("{\"attribute\":");
     _nodeAttribute->value.serialize(writerBuffer);
     writerBuffer.print("}");
-    yield();
     ws.textAll(buffer);
-    yield();
 }
 
 void virtualHomee::updateNode(node *_node)
@@ -72,9 +70,7 @@ void virtualHomee::updateNode(node *_node)
     writerBuffer.print("{\"node\":");
     _node->value.serialize(writerBuffer);
     writerBuffer.print("}");
-    yield();
     ws.textAll(buffer);
-    yield();
 }
 
 String virtualHomee::getUrlParameterValue(const String &url, const String &parameterName)
