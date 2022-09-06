@@ -276,17 +276,14 @@ void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _valu
 {
     _attribute->setTargetValue(_value);
     this->updateAttribute(_attribute);
-    yield();
     _attribute->setCurrentValue(_value);
     this->updateAttribute(_attribute);
-    yield();
 }
 
 void virtualHomee::updateAttributeData(nodeAttributes *_attribute, const String &_data)
 {
     _attribute->setData(_data);
     this->updateAttribute(_attribute);
-    yield();
 }
 
 void virtualHomee::clientConnected()

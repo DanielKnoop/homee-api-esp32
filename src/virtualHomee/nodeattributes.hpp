@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "lightweight-float-to-string.hpp"
 struct nodeAttributesValues
 {
     uint32_t id = 0;
@@ -25,6 +26,7 @@ struct nodeAttributesValues
 
     void serialize(Print &outputStream)
     {
+        /*
         outputStream.printf("{\"id\":%d,\"node_id\":%d,\"instance\":%d,\"minimum\":%f,\"maximum\":%f,\"current_value\":%f,\"target_value\":%f,\"last_value\":%f,\"unit\":\"%s\",\"step_value\":%f,\"editable\":%d,\"type\":%d,\"state\":%d,\"last_changed\":%d,\"changed_by\":%d,\"changed_by_id\":%d,\"based_on\":%d,\"data\":\"%s\",\"name\":\"%s\"}", 
             this->id, 
             this->node_id, 
@@ -45,6 +47,47 @@ struct nodeAttributesValues
             this->based_on, 
             this->data.c_str(), 
             this->name.c_str());
+        */
+
+        outputStream.print("{\"id\":");
+        outputStream.print(this->id);
+        outputStream.print(",\"node_id\":");
+        outputStream.print(this->node_id);
+        outputStream.print(",\"instance\":");
+        outputStream.print(this->instance);
+        outputStream.print(",\"minimum\":");
+        writeFloat(outputStream, this->minimum);
+        outputStream.print(",\"maximum\":");
+        writeFloat(outputStream, this->maximum);
+        outputStream.print(",\"current_value\":");
+        writeFloat(outputStream, this->current_value);
+        outputStream.print(",\"target_value\":");
+        writeFloat(outputStream, this->target_value);
+        outputStream.print(",\"last_value\":");
+        writeFloat(outputStream, this->last_value);
+        outputStream.print(",\"unit\":\"");
+        outputStream.print(this->unit);
+        outputStream.print("\",\"step_value\":");
+        writeFloat(outputStream, this->step_value);
+        outputStream.print(",\"editable\":");
+        outputStream.print(this->editable);
+        outputStream.print(",\"type\":");
+        outputStream.print(this->type);
+        outputStream.print(",\"state\":");
+        outputStream.print(this->state);
+        outputStream.print(",\"last_changed\":");
+        outputStream.print(this->last_changed);
+        outputStream.print(",\"changed_by\":");
+        outputStream.print(this->changed_by);
+        outputStream.print(",\"changed_by_id\":");
+        outputStream.print(this->changed_by_id);
+        outputStream.print(",\"based_on\":");
+        outputStream.print(this->based_on);
+        outputStream.print(",\"data\":\"");
+        outputStream.print(this->data);
+        outputStream.print("\",\"name\":\"");
+        outputStream.print(this->name);
+        outputStream.print("\"}");
     };
 };
 
