@@ -108,7 +108,6 @@ node::~node()
         delete attributes[i];
     }
     attributes.clear();
-    Serial.println("Node Removed");
 }
 
 void node::setState(uint8_t _state)
