@@ -55,6 +55,7 @@ class virtualHomee
 public:
     void start();
     void addNode(node *n);
+    void removeNodeById(uint32_t node_id);
     node *getNodeById(int32_t node_id);
     node *getNode(uint8_t n);
     uint8_t GetNumberOfNodes();
@@ -88,6 +89,7 @@ private:
     void clientDisconnected();
     void initializeWebServer();
     void initializeWebsocketServer();
+    size_t getNodePositionInVector(node* n);
     static void handleHttpPostRequest(virtualHomee *context, AsyncWebServerRequest *request);
     static void handleHttpOptionsAccessToken(AsyncWebServerRequest *request);
 };

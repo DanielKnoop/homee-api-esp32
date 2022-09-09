@@ -11,6 +11,30 @@ void virtualHomee::addNode(node *n)
     this->value.nodes.push_back(n);
 }
 
+void virtualHomee::removeNodeById(uint32_t nodeId)
+{
+    node* n_1 = this->getNodeById(nodeId);
+    if(n_1)
+    {
+        size_t position = getNodePositionInVector(n_1);
+        if(position < 9999)
+            this->value.nodes.erase(this->value.nodes.begin() + position);
+        delete n_1;
+    }
+}
+
+size_t virtualHomee::getNodePositionInVector(node* n)
+{
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    {
+        if(this->getNode(i) == n)
+        {
+            return i;
+        }
+    }
+    return 9999;
+}
+
 node *virtualHomee::getNodeById(int32_t node_id)
 {
     for (int i = 0; i < this->GetNumberOfNodes(); i++)
