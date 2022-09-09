@@ -61,8 +61,8 @@ node::~node()
     for(int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         delete value.attributes[i];
-        value.attributes[i] = nullptr;
     }
+    value.attributes.clear();
 }
 
 void node::setState(uint8_t _state)
