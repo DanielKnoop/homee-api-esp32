@@ -50,6 +50,7 @@ private:
 public:
     void start();
     void addNode(node* n);
+    void removeNodeById(uint32_t node_id);
     node* getNodeById(int32_t node_id);
     nodeAttributes* getAttributeById(uint32_t _id); 
     void updateAttribute(nodeAttributes* _nodeAttribute);

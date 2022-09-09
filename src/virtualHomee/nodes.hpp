@@ -11,6 +11,7 @@ class nodes
         size_t GetNodePositionInVector(node* n);
     public:
         void AddNode(node* n);
+        void RemoveNodeById(int32_t nodeId);
         uint8_t GetNumberOfNodes();
         node* GetNode(uint8_t n);
         node* GetNodeById(int32_t nodeId);

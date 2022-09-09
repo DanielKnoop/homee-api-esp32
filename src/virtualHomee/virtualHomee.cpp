@@ -377,3 +377,8 @@ virtualHomee::~virtualHomee()
 {
     ws.closeAll();
 }
+
+void virtualHomee::removeNodeById(uint32_t node_id)
+{
+    nds.RemoveNodeById(node_id);
+}

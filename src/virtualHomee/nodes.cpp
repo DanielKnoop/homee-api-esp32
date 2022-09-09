@@ -62,3 +62,27 @@ nodes::~nodes()
 {
     
 }
+
+void nodes::RemoveNodeById(int32_t nodeId)
+{
+    node* n_1 = this->GetNodeById(nodeId);
+    if(n_1)
+    {
+        size_t position = GetNodePositionInVector(n_1);
+        if(position < 9999)
+            n.erase(n.begin() + position);
+        delete n_1;
+    }
+}
+
+size_t nodes::GetNodePositionInVector(node* n)
+{
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    {
+        if(this->GetNode(i) == n)
+        {
+            return i;
+        }
+    }
+    return 9999;
+}
