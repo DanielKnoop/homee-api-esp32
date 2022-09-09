@@ -12,14 +12,13 @@ size_t nodes::size()
 
 void nodes::AddNode(node* n_1)
 {
-    if(this->numberOfNodes > MAX_NUMBER_OF_NODES)
-        return;
-    n[this->numberOfNodes++] = n_1;
+    //n[this->numberOfNodes++] = n_1;
+    n.push_back(n_1);
 }
 
 void nodes::GetJSONArray(JsonArray jsonDocument)
 {
-    for(int i = 0; i < this->numberOfNodes; i++)
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
     {
         n[i]->AddJSONArrayElement(jsonDocument);
     }    
@@ -27,7 +26,7 @@ void nodes::GetJSONArray(JsonArray jsonDocument)
 
 node* nodes::GetNode(uint8_t n)
 {
-    if (n < this->numberOfNodes)
+    if (n < this->GetNumberOfNodes())
     {
         return this->n[n];
     }
@@ -41,9 +40,9 @@ node* nodes::GetNodeById(int32_t nodeId)
 {
     for(int i = 0; i < this->GetNumberOfNodes(); i++)
     {
-        if(this->n[i]->getId() == nodeId)
+        if(this->GetNode(i)->getId() == nodeId)
         {
-            return n[i];
+            return this->GetNode(i);
         }
     }
     return nullptr;
@@ -51,7 +50,7 @@ node* nodes::GetNodeById(int32_t nodeId)
 
 uint8_t nodes::GetNumberOfNodes() 
 {
-    return this->numberOfNodes;
+    return this->n.size();
 }
 
 nodes::nodes()

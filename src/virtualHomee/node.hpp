@@ -2,9 +2,7 @@
 
 #include "ArduinoJson.h"
 #include "nodeattributes.hpp"
-
-#define MAX_NUMBER_OF_NODES 99
-#define MAX_NUMBER_OF_ATTRIBUTES 99
+#include <vector>
 
 class node
 {
@@ -27,8 +25,7 @@ class node
         String phonetic_name = "";
         uint8_t owner = 1;
         uint8_t security = 0;
-        nodeAttributes* attributes[MAX_NUMBER_OF_ATTRIBUTES];
-        uint8_t numberOfAttributes = 0;
+        std::vector<nodeAttributes*> attributes;
 
         uint8_t calculateNextInstance(uint16_t _type);
         uint32_t getTimestamp();

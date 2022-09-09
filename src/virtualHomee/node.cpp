@@ -13,7 +13,7 @@ size_t node::size()
 
 uint8_t node::GetNumberOfAttributes()
 {
-    return this->numberOfAttributes;
+    return this->attributes.size();
 }
 
 nodeAttributes* node::GetAttribute(uint8_t n)
@@ -37,7 +37,7 @@ uint8_t node::calculateNextInstance(uint16_t _type)
     uint8_t occurrence = 0;
     for (int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
-        if(attributes[i]->getType() == _type)
+        if(this->GetAttribute(i)->getType() == _type)
         {
             occurrence++;
         }
@@ -45,18 +45,16 @@ uint8_t node::calculateNextInstance(uint16_t _type)
     return occurrence;
 }
 
-nodeAttributes* node::AddAttributes(nodeAttributes* attributes)
+nodeAttributes* node::AddAttributes(nodeAttributes* attribute)
 {
-    if(this->GetNumberOfAttributes() > MAX_NUMBER_OF_ATTRIBUTES)
-        return nullptr;
-    attributes->setNodeId(this->id);
-    if(attributes->getId() == 0)
+    attribute->setNodeId(this->id);
+    if(attribute->getId() == 0)
     {
-        attributes->setId(this->GetNumberOfAttributes() + (MAX_NUMBER_OF_NODES + 1) * this->id);
+        attribute->setId(this->GetNumberOfAttributes() + (100 + 1) * this->id);
     }
-    attributes->setInstance(this->calculateNextInstance(attributes->getType()));
-    this->attributes[this->numberOfAttributes++] = attributes;
-    return attributes;
+    attribute->setInstance(this->calculateNextInstance(attribute->getType()));
+    this->attributes.push_back(attribute);
+    return attribute;
 }
 
 void node::AddJSONObject(JsonObject jsonObject)
@@ -80,7 +78,7 @@ void node::AddJSONObject(JsonObject jsonObject)
     jsonObject["owner"] = this->owner;
     jsonObject["security"] = this->security;
     JsonArray attributes = jsonObject.createNestedArray("attributes");
-    for(int i = 0; i < this->numberOfAttributes; i++)
+    for(int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         JsonObject attribute = attributes.createNestedObject();
         this->attributes[i]->GetJSONObject(attribute);
@@ -108,8 +106,9 @@ node::~node()
     for(int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
         delete attributes[i];
-        attributes[i] = nullptr;
     }
+    attributes.clear();
+    Serial.println("Node Removed");
 }
 
 void node::setState(uint8_t _state)

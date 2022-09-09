@@ -2,12 +2,13 @@
 
 #include "ArduinoJson.h"
 #include "node.hpp"
+#include <vector>
 
 class nodes
 {
     private:
-        node* n[MAX_NUMBER_OF_NODES];
-        uint8_t numberOfNodes = 0;
+        std::vector<node*> n;
+        size_t GetNodePositionInVector(node* n);
     public:
         void AddNode(node* n);
         uint8_t GetNumberOfNodes();
