@@ -163,5 +163,4 @@ void nodeAttributes::executeCallback()
 nodeAttributes::~nodeAttributes()
 {
     callback = nullptr;
-    Serial.println("Attribute Removed");
 }
