@@ -267,16 +267,6 @@ void virtualHomee::initializeWebsocketServer()
 
 }
 
-void virtualHomee::start()
-{
-    initializeWebServer();
-    initializeWebsocketServer();
-
-    server.addHandler(&ws);
-    server.begin();
-    this->startDiscoveryService();
-}
-
 void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client)
 { 
 #ifdef DEBUG_VIRTUAL_HOMEE
@@ -287,6 +277,26 @@ void virtualHomee::sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWeb
 #endif
     jsonBuffer->setLength();
     client->text(jsonBuffer);
+}
+
+void virtualHomee::start()
+{
+    server.begin();
+    if(this->firstStart)
+    {
+        this->firstStart = false;
+        this->startDiscoveryService();
+    }
+}
+
+void virtualHomee::stop()
+{
+    //Disconnect all Clients
+    ws.closeAll(4444, "DEVICE_DISCONNECT");
+    ws.cleanupClients();
+    //Stop Services
+    server.end();
+    //this->stopDiscoveryService();
 }
 
 void virtualHomee::startDiscoveryService()
@@ -312,6 +322,11 @@ void virtualHomee::startDiscoveryService()
         });
     }
 }
+
+//void virtualHomee::stopDiscoveryService()
+//{
+//    udp.close();
+//}
 
 void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _value)
 {
@@ -371,6 +386,10 @@ virtualHomee::virtualHomee()
     this->homeeId = mac;
     this->version = "2.25.0 (ed9c50)";
     this->nds.AddNode(new node(-1, 1, "homee"));
+
+    initializeWebServer();
+    initializeWebsocketServer();
+    server.addHandler(&ws);
 }
 
 virtualHomee::~virtualHomee()

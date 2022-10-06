@@ -33,9 +33,11 @@ private:
     AsyncUDP udp;
 
     nodes nds;
+    bool firstStart = true;
 
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
+    //void stopDiscoveryService();
     nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(const String& url,const String& parameterName);
     String gethomeeId();
@@ -49,6 +51,7 @@ private:
     static void handleHttpOptionsAccessToken(AsyncWebServerRequest *request);
 public:
     void start();
+    void stop();
     void addNode(node* n);
     void removeNodeById(uint32_t node_id);
     node* getNodeById(int32_t node_id);
