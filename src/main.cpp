@@ -134,5 +134,18 @@ void loop() {
     }
     vhih.updateAttributeValue(na1, newValue);
   }
+  if(Serial.available())
+  {
+    int s = Serial.read();
+    if (s == (int)'c')
+    {
+      vhih.stop();
+    }
+    else if(s == (int)'s')
+    {
+      vhih.start();
+    }
+  }
+
 }
 #endif
