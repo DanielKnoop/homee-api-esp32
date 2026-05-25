@@ -38,11 +38,11 @@ class node
         uint8_t GetNumberOfAttributes();
         nodeAttributes* GetAttribute(uint8_t n);
         size_t size();
-        void setImage(String _image);
+        void setImage(const String& _image);
         String getImage();
         int32_t getId() {return id;};
         void setState(uint8_t _state);
         uint8_t getState() { return this->state; };
-        void setNote(String _note) { this->note = _note; }
+        void setNote(const String& _note) { this->note = _note; }
         String getNote() { return this->note; }
 };

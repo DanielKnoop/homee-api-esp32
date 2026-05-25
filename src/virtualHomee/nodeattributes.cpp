@@ -52,7 +52,7 @@ void nodeAttributes::setMaximumValue(double_t _max)
     this->maximum = _max;
 }
 
-void nodeAttributes::setUnit(String _unit)
+void nodeAttributes::setUnit(const String& _unit)
 {
     this->unit = _unit;
 }
@@ -133,7 +133,7 @@ String nodeAttributes::getData()
     return this->data;
 }
 
-void nodeAttributes::setData(String _data)
+void nodeAttributes::setData(const String& _data)
 {
     this->data = _data;
 }

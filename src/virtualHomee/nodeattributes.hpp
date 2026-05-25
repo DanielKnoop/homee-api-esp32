@@ -43,14 +43,14 @@ class nodeAttributes
         double_t getMinimumValue();
         void setMaximumValue(double_t _max);
         double_t getMaximumValue();
-        void setUnit(String _unit);
+        void setUnit(const String& _unit);
         void setCurrentValue(double_t _currentValue);
         double_t getCurrentValue();
         void setEditable(uint8_t _editable);
         double_t getTargetValue();
         void setTargetValue(double_t _targetValue);
         String getData();
-        void setData(String _data);
+        void setData(const String& _data);
         void setStepValue(double_t _step_value);
         double_t getStepValue();
         void setState(uint8_t _state) { this->state = _state; }

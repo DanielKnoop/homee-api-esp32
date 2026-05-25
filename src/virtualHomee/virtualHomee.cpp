@@ -67,30 +67,38 @@ node* virtualHomee::getNodeById(int32_t node_id)
 void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
 {
     ws.cleanupClients();
+    if (ws.count() == 0) return;
+
+    VHIH_MUTEX_TAKE(_mutex);
     JsonDocument doc;
     _nodeAttribute->GetJSONObject(doc["attribute"].to<JsonObject>());
-    auto buf = std::make_shared<std::vector<uint8_t>>();
-    buf->reserve(measureJson(doc));
-    SharedBufferPrint out(*buf);
+    _txBuf.clear();
+    _txBuf.reserve(measureJson(doc));
+    SharedBufferPrint out(_txBuf);
     serializeJson(doc, out);
 #ifdef DEBUG_VIRTUAL_HOMEE
-    Serial.printf("DEBUG updateAttribute: clients=%u len=%u\n", ws.count(), buf->size());
-    Serial.write(buf->data(), buf->size());
+    Serial.printf("DEBUG updateAttribute: clients=%u len=%u\n", ws.count(), _txBuf.size());
+    Serial.write(_txBuf.data(), _txBuf.size());
     Serial.println();
 #endif
-    ws.textAll(buf->data(), buf->size());
+    ws.textAll(_txBuf.data(), _txBuf.size());
+    VHIH_MUTEX_GIVE(_mutex);
 }
 
 void virtualHomee::updateNode(node* _node)
 {
     ws.cleanupClients();
+    if (ws.count() == 0) return;
+
+    VHIH_MUTEX_TAKE(_mutex);
     JsonDocument doc;
     _node->AddJSONObject(doc["node"].to<JsonObject>());
-    auto buf = std::make_shared<std::vector<uint8_t>>();
-    buf->reserve(measureJson(doc));
-    SharedBufferPrint out(*buf);
+    _txBuf.clear();
+    _txBuf.reserve(measureJson(doc));
+    SharedBufferPrint out(_txBuf);
     serializeJson(doc, out);
-    ws.textAll(buf->data(), buf->size());
+    ws.textAll(_txBuf.data(), _txBuf.size());
+    VHIH_MUTEX_GIVE(_mutex);
 }
 
 String virtualHomee::getUrlParameterValue(const String& url, const String& parameterName)
@@ -194,9 +202,10 @@ void virtualHomee::initializeWebsocketServer()
                 }
                 else if (message.equalsIgnoreCase("GET:nodes"))
                 {
-                    auto buf = std::make_shared<std::vector<uint8_t>>();
-                    buf->reserve(nds.size());
-                    SharedBufferPrint out(*buf);
+                    VHIH_MUTEX_TAKE(_mutex);
+                    _txBuf.clear();
+                    _txBuf.reserve(nds.size());
+                    SharedBufferPrint out(_txBuf);
                     out.print("{\"nodes\":[");
                     for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++) {
                         if (i > 0) out.print(',');
@@ -205,7 +214,8 @@ void virtualHomee::initializeWebsocketServer()
                         serializeJson(nodeDoc, out);
                     }
                     out.print("]}");
-                    client->text(buf->data(), buf->size());
+                    client->text(_txBuf.data(), _txBuf.size());
+                    VHIH_MUTEX_GIVE(_mutex);
                 }
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {
@@ -278,11 +288,13 @@ void virtualHomee::sendWSMessage(JsonDocument& doc, AsyncWebSocketClient *client
     Serial.println(measureJson(doc));
     Serial.println();
 #endif
-    auto buf = std::make_shared<std::vector<uint8_t>>();
-    buf->reserve(measureJson(doc));
-    SharedBufferPrint out(*buf);
+    VHIH_MUTEX_TAKE(_mutex);
+    _txBuf.clear();
+    _txBuf.reserve(measureJson(doc));
+    SharedBufferPrint out(_txBuf);
     serializeJson(doc, out);
-    client->text(buf->data(), buf->size());
+    client->text(_txBuf.data(), _txBuf.size());
+    VHIH_MUTEX_GIVE(_mutex);
 }
 
 void virtualHomee::start()
@@ -386,6 +398,11 @@ virtualHomee::virtualHomee()
     : server(7681),
       ws("/connection")
 {
+#if defined(ESP32)
+    _mutex = xSemaphoreCreateMutex();
+#endif
+    _txBuf.reserve(512);
+
     String mac = WiFi.macAddress();
     mac.replace(":", "");
     this->homeeId = mac;
@@ -400,6 +417,9 @@ virtualHomee::virtualHomee()
 virtualHomee::~virtualHomee()
 {
     ws.closeAll();
+#if defined(ESP32)
+    if (_mutex) vSemaphoreDelete(_mutex);
+#endif
 }
 
 void virtualHomee::removeNodeById(uint32_t node_id)

@@ -96,7 +96,7 @@ String node::getImage()
     return this->image;
 }
 
-void node::setImage(String _image)
+void node::setImage(const String& _image)
 {
     this->image = _image;
 }
