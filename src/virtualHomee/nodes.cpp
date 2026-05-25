@@ -7,7 +7,7 @@ size_t nodes::size()
     {
         s += this->GetNode(i)->size();
     }
-    return s + JSON_ARRAY_SIZE(this->GetNumberOfNodes()) + 16;
+    return s + this->GetNumberOfNodes() * 16 + 16;
 }
 
 void nodes::AddNode(node* n_1)

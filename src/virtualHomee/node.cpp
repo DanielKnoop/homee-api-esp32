@@ -77,17 +77,17 @@ void node::AddJSONObject(JsonObject jsonObject)
     jsonObject["phonetic_name"] = this->phonetic_name;
     jsonObject["owner"] = this->owner;
     jsonObject["security"] = this->security;
-    JsonArray attributes = jsonObject.createNestedArray("attributes");
+    JsonArray attributes = jsonObject["attributes"].to<JsonArray>();
     for(int i = 0; i < this->GetNumberOfAttributes(); i++)
     {
-        JsonObject attribute = attributes.createNestedObject();
+        JsonObject attribute = attributes.add<JsonObject>();
         this->attributes[i]->GetJSONObject(attribute);
     }    
 }
 
 void node::AddJSONArrayElement(JsonArray jsonArray)
 {
-    JsonObject jsonObject = jsonArray.createNestedObject();
+    JsonObject jsonObject = jsonArray.add<JsonObject>();
     this->AddJSONObject(jsonObject);
 }
 

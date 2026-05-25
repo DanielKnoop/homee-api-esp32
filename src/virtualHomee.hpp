@@ -17,7 +17,6 @@
 #include <AsyncWebSocket.h>
 #include <time.h>
 
-#include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "virtualHomee/nodes.hpp"
 
@@ -41,7 +40,7 @@ private:
     nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(const String& url,const String& parameterName);
     String gethomeeId();
-    void sendWSMessage(AsyncWebSocketJsonBuffer * jsonBuffer, AsyncWebSocketClient *client);
+    void sendWSMessage(JsonDocument& doc, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
     void clientConnected();
     void clientDisconnected();
