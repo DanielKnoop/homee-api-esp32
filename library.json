@@ -1,8 +1,8 @@
 {
     "name": "homee-api-esp32",
-    "version": "0.2.7",
-    "description": "A \"Hello world\" program is a computer program that outputs \"Hello World\" (or some variant) on a display device",
-    "keywords": "homee, vhih, virtual homee",
+    "version": "0.3.0",
+    "description": "Implements a virtual homee hub (homee-in-homee) on ESP32 and ESP8266. Exposes nodes and attributes over WebSocket and HTTP, handles UDP discovery, and pushes attribute updates to connected homee hubs in real time.",
+    "keywords": "homee, vhih, virtual homee, homee-in-homee, smart home, esp32, esp8266",
     "build":
     {
       "libCompatMode": "strict"
