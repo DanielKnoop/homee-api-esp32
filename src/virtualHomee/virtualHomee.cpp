@@ -202,20 +202,60 @@ void virtualHomee::initializeWebsocketServer()
                 }
                 else if (message.equalsIgnoreCase("GET:nodes"))
                 {
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.printf("GET:nodes start  heap=%u nodes=%u\n", ESP.getFreeHeap(), nds.GetNumberOfNodes());
+#endif
                     VHIH_MUTEX_TAKE(_mutex);
-                    _txBuf.clear();
-                    _txBuf.reserve(nds.size());
-                    SharedBufferPrint out(_txBuf);
-                    out.print("{\"nodes\":[");
+
+                    // Pass 1: count bytes without buffering
+                    struct CountPrint : Print {
+                        size_t total = 0;
+                        size_t write(uint8_t) override                  { total++; return 1; }
+                        size_t write(const uint8_t*, size_t l) override  { total += l; return l; }
+                    } counter;
+                    counter.print("{\"nodes\":[");
                     for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++) {
-                        if (i > 0) out.print(',');
+                        if (i > 0) counter.print(',');
                         JsonDocument nodeDoc;
                         nds.GetNode(i)->AddJSONObject(nodeDoc.to<JsonObject>());
-                        serializeJson(nodeDoc, out);
+                        serializeJson(nodeDoc, counter);
                     }
-                    out.print("]}");
-                    client->text(_txBuf.data(), _txBuf.size());
+                    counter.print("]}");
+
+                    // Allocate exact-size WS buffer — client->text() moves the shared_ptr, no copy
+                    AsyncWebSocketMessageBuffer* wsBuf = ws.makeBuffer(counter.total);
+                    if (!wsBuf) {
+#ifdef DEBUG_VIRTUAL_HOMEE
+                        Serial.printf("GET:nodes makeBuffer(%u) failed heap=%u\n", counter.total, ESP.getFreeHeap());
+#endif
+                        VHIH_MUTEX_GIVE(_mutex);
+                        return;
+                    }
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.printf("GET:nodes buf=%u heap=%u\n", counter.total, ESP.getFreeHeap());
+#endif
+
+                    // Pass 2: serialize directly into WebSocket buffer
+                    struct RawPrint : Print {
+                        uint8_t* ptr; size_t pos;
+                        explicit RawPrint(uint8_t* p) : ptr(p), pos(0) {}
+                        size_t write(uint8_t c) override                  { ptr[pos++] = c; return 1; }
+                        size_t write(const uint8_t* d, size_t l) override { memcpy(ptr+pos, d, l); pos+=l; return l; }
+                    } raw(wsBuf->get());
+                    raw.print("{\"nodes\":[");
+                    for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++) {
+                        if (i > 0) raw.print(',');
+                        JsonDocument nodeDoc;
+                        nds.GetNode(i)->AddJSONObject(nodeDoc.to<JsonObject>());
+                        serializeJson(nodeDoc, raw);
+                    }
+                    raw.print("]}");
+
+                    client->text(wsBuf);  // transfers shared_ptr ownership, deletes wsBuf wrapper
                     VHIH_MUTEX_GIVE(_mutex);
+#ifdef DEBUG_VIRTUAL_HOMEE
+                    Serial.printf("GET:nodes done   heap=%u\n", ESP.getFreeHeap());
+#endif
                 }
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {
