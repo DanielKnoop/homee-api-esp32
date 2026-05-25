@@ -63,20 +63,6 @@ node* virtualHomee::getNodeById(int32_t node_id)
     return nds.GetNodeById(node_id);
 }
 
-nodeAttributes *virtualHomee::getAttributeWithId(uint32_t id)
-{
-    for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++)
-    {
-        for (uint8_t j = 0; j < nds.GetNode(i)->GetNumberOfAttributes(); j++)
-        {
-            if (nds.GetNode(i)->GetAttribute(j)->getId() == id)
-            {
-                return nds.GetNode(i)->GetAttribute(j);
-            }
-        }
-    }
-    return nullptr;
-}
 
 void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
 {
@@ -232,7 +218,7 @@ void virtualHomee::initializeWebsocketServer()
                     Serial.print("Target Value: ");
                     Serial.println(targetValue);
 #endif
-                    nodeAttributes *changedNode = this->getAttributeWithId(attributeId);
+                    nodeAttributes *changedNode = this->getAttributeById(attributeId);
                     if (changedNode != nullptr)
                     {
                         changedNode->setTargetValue(targetValue);
@@ -329,15 +315,19 @@ void virtualHomee::startDiscoveryService()
 #endif
         udp.onPacket([this](AsyncUDPPacket packet)
         {
-            String message = packet.readString();
+            char msgBuf[packet.length() + 1];
+            memcpy(msgBuf, packet.data(), packet.length());
+            msgBuf[packet.length()] = '\0';
+            String message(msgBuf);
 #ifdef DEBUG_VIRTUAL_HOMEE
             Serial.print("UDP Message reveived: ");
             Serial.println(message);
 #endif
 
-            if (message.equalsIgnoreCase(this->gethomeeId()))
+            if (message.equalsIgnoreCase(this->getHomeeId()))
             {
-                packet.printf("initialized:%s:%s:homee", this->gethomeeId().c_str(), this->gethomeeId().c_str());
+                String reply = "initialized:" + this->getHomeeId() + ":" + this->getHomeeId() + ":homee";
+                packet.write((const uint8_t*)reply.c_str(), reply.length());
             }
         });
     }
@@ -360,11 +350,6 @@ void virtualHomee::updateAttributeData(nodeAttributes* _attribute, const String&
 {
     _attribute->setData(_data);
     this->updateAttribute(_attribute);
-}
-
-String virtualHomee::gethomeeId()
-{
-    return this->homeeId;
 }
 
 void virtualHomee::clientConnected()

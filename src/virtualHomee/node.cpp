@@ -118,6 +118,5 @@ void node::setState(uint8_t _state)
 
 uint32_t node::getTimestamp()
 {
-    time_t now = time(&now);
-    return time(&now);
+    return (uint32_t)time(NULL);
 }

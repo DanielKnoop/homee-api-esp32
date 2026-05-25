@@ -39,7 +39,7 @@ double_t nodeAttributes::getCurrentValue()
 
 size_t nodeAttributes::size()
 {
-    return 350 + this->name.length() + this->data.length() + this->unit.length();
+    return 350 + this->data.length() + this->unit.length();
 }
 
 void nodeAttributes::setMinimumValue(double_t _min)
@@ -100,8 +100,7 @@ uint32_t nodeAttributes::getNodeId()
 
 uint32_t nodeAttributes::getTimestamp()
 {
-    time_t now = time(&now);
-    return time(&now);
+    return (uint32_t)time(NULL);
 }
 
 void nodeAttributes::setCurrentValue(double_t _currentValue)

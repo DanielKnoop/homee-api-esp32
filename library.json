@@ -43,13 +43,20 @@
         "platforms": ["espressif32"]
       },
       {
+        "owner": "mathieucarbou",
         "name": "ESPAsyncWebServer",
-        "version": "https://github.com/DanielKnoop/ESPAsyncWebServer.git",
+        "version": "^3.6.0",
         "platforms": ["espressif8266"]
       },
       {
+        "owner": "esphome",
+        "name": "ESPAsyncTCP-esphome",
+        "version": "^2.0.0",
+        "platforms": ["espressif8266"]
+      },
+      {
+        "owner": "me-no-dev",
         "name": "ESPAsyncUDP",
-        "version": "https://github.com/DanielKnoop/ESPAsyncUDP.git",
         "platforms": ["espressif8266"]
       }
     ],

@@ -37,9 +37,7 @@ private:
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
     //void stopDiscoveryService();
-    nodeAttributes* getAttributeWithId(uint32_t id);
     String getUrlParameterValue(const String& url,const String& parameterName);
-    String gethomeeId();
     void sendWSMessage(JsonDocument& doc, AsyncWebSocketClient *client);
     size_t numberOfWSClients = 0;
     void clientConnected();
