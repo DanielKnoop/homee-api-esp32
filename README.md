@@ -84,18 +84,16 @@ Um den Sensor zum homee hinzuzufügen sucht man in der homee-app unter Geräte h
 ## Abhängigkeiten
 Die Library ist für ESP8266 und ESP32 Boards ausgelegt.
 
-### ESP8266
-Folgende Abhängigkeiten benötigt der ESP8266
-* ArduinoJson 6.17.3 (bblanchon)
-* ESPAsyncWebServer 1.2.7 (https://github.com/DanielKnoop/ESPAsyncWebServer)
-    * ESPAsyncTCP 1.2.2 (me-no-dev)
-* ESPAsyncUDP (https://github.com/DanielKnoop/ESPAsyncUDP)
-
 ### ESP32
-Folgende Abhängigkeiten benötigt der ESP32
-* ArduinoJson >= 6.17.3 (Gibt es über die Paketverwaltung)
-* ESPAsyncWebServer >= 1.2.7 (https://github.com/DanielKnoop/ESPAsyncWebServer)
-    * AsyncTCP 1.1.1 (me-no-dev)
+* [ArduinoJson](https://github.com/bblanchon/ArduinoJson) ^7.4.3 (bblanchon)
+* [ESPAsyncWebServer](https://github.com/ESP32Async/ESPAsyncWebServer) ^3.11.0 (ESP32Async)
+    * [AsyncTCP](https://github.com/ESP32Async/AsyncTCP) ^3.4.10 (ESP32Async)
+
+### ESP8266
+* [ArduinoJson](https://github.com/bblanchon/ArduinoJson) ^7.4.3 (bblanchon)
+* [ESPAsyncWebServer](https://github.com/mathieucarbou/ESPAsyncWebServer) ^3.6.0 (mathieucarbou)
+    * [ESPAsyncTCP-esphome](https://github.com/esphome/ESPAsyncTCP) ^2.0.0 (esphome)
+* [ESPAsyncUDP](https://github.com/me-no-dev/ESPAsyncUDP) (me-no-dev)
 
 ## Hinweise
 
