@@ -1,5 +1,21 @@
 #include "virtualHomee.hpp"
 
+namespace {
+    class SharedBufferPrint : public Print {
+        std::vector<uint8_t>& _buf;
+    public:
+        explicit SharedBufferPrint(std::vector<uint8_t>& buf) : _buf(buf) {}
+        size_t write(uint8_t c) override {
+            _buf.push_back(c);
+            return 1;
+        }
+        size_t write(const uint8_t* data, size_t len) override {
+            _buf.insert(_buf.end(), data, data + len);
+            return len;
+        }
+    };
+}
+
 void virtualHomee::getSettings(JsonObject jsonDoc)
 {
     jsonDoc["settings"]["address"] = "";
@@ -67,9 +83,16 @@ void virtualHomee::updateAttribute(nodeAttributes *_nodeAttribute)
     ws.cleanupClients();
     JsonDocument doc;
     _nodeAttribute->GetJSONObject(doc["attribute"].to<JsonObject>());
-    String output;
-    serializeJson(doc, output);
-    ws.textAll(output);
+    auto buf = std::make_shared<std::vector<uint8_t>>();
+    buf->reserve(measureJson(doc));
+    SharedBufferPrint out(*buf);
+    serializeJson(doc, out);
+#ifdef DEBUG_VIRTUAL_HOMEE
+    Serial.printf("DEBUG updateAttribute: clients=%u len=%u\n", ws.count(), buf->size());
+    Serial.write(buf->data(), buf->size());
+    Serial.println();
+#endif
+    ws.textAll(buf->data(), buf->size());
 }
 
 void virtualHomee::updateNode(node* _node)
@@ -77,9 +100,11 @@ void virtualHomee::updateNode(node* _node)
     ws.cleanupClients();
     JsonDocument doc;
     _node->AddJSONObject(doc["node"].to<JsonObject>());
-    String output;
-    serializeJson(doc, output);
-    ws.textAll(output);
+    auto buf = std::make_shared<std::vector<uint8_t>>();
+    buf->reserve(measureJson(doc));
+    SharedBufferPrint out(*buf);
+    serializeJson(doc, out);
+    ws.textAll(buf->data(), buf->size());
 }
 
 String virtualHomee::getUrlParameterValue(const String& url, const String& parameterName)
@@ -183,9 +208,18 @@ void virtualHomee::initializeWebsocketServer()
                 }
                 else if (message.equalsIgnoreCase("GET:nodes"))
                 {
-                    JsonDocument doc;
-                    nds.GetJSONArray(doc["nodes"].to<JsonArray>());
-                    this->sendWSMessage(doc, client);
+                    auto buf = std::make_shared<std::vector<uint8_t>>();
+                    buf->reserve(nds.size());
+                    SharedBufferPrint out(*buf);
+                    out.print("{\"nodes\":[");
+                    for (uint8_t i = 0; i < nds.GetNumberOfNodes(); i++) {
+                        if (i > 0) out.print(',');
+                        JsonDocument nodeDoc;
+                        nds.GetNode(i)->AddJSONObject(nodeDoc.to<JsonObject>());
+                        serializeJson(nodeDoc, out);
+                    }
+                    out.print("]}");
+                    client->text(buf->data(), buf->size());
                 }
                 else if (message.substring(0, 9).equalsIgnoreCase("PUT:nodes")) //PUT:nodes/0/attributes?IDs=200&target_value=0.000000
                 {
@@ -258,9 +292,11 @@ void virtualHomee::sendWSMessage(JsonDocument& doc, AsyncWebSocketClient *client
     Serial.println(measureJson(doc));
     Serial.println();
 #endif
-    String output;
-    serializeJson(doc, output);
-    client->text(output);
+    auto buf = std::make_shared<std::vector<uint8_t>>();
+    buf->reserve(measureJson(doc));
+    SharedBufferPrint out(*buf);
+    serializeJson(doc, out);
+    client->text(buf->data(), buf->size());
 }
 
 void virtualHomee::start()
@@ -368,7 +404,7 @@ virtualHomee::virtualHomee()
     String mac = WiFi.macAddress();
     mac.replace(":", "");
     this->homeeId = mac;
-    this->version = "2.25.0 (ed9c50)";
+    this->version = "2.41.3+46ad073c";
     this->nds.AddNode(new node(-1, 1, "homee"));
 
     initializeWebServer();

@@ -20,7 +20,6 @@ void nodeAttributes::GetJSONObject(JsonObject doc)
     doc["changed_by_id"] = this->changed_by_id;
     doc["based_on"] = this->based_on;
     doc["data"] = this->data;
-    doc["name"] = this->name;
 }
 
 double_t nodeAttributes::getMinimumValue()
@@ -109,7 +108,10 @@ void nodeAttributes::setCurrentValue(double_t _currentValue)
 {
     this->last_value = this->current_value;
     this->current_value = _currentValue;
-    this->last_changed = getTimestamp();
+    uint32_t ts = getTimestamp();
+    if (ts > this->last_changed) {
+        this->last_changed = ts;
+    }
 }
 
 void nodeAttributes::setEditable(uint8_t _editable)
