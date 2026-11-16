@@ -6,6 +6,12 @@ die Versionierung an [SemVer](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Added
+- Host-Tests für die numerische Serialisierung in `nodeAttributes::GetJSONObject()`,
+  aufrufbar mit `pio test -e native`. `node`, `nodeAttributes` und `nodes` hängen von
+  Arduino nur an `String`, der in `test/mocks/Arduino.h` nachgebildet wird — die Tests
+  laufen damit ohne Hardware in unter zwei Sekunden.
+
 ### Fixed
 - Beschädigte `GET:nodes`-Antwort bei großen Attributwerten. `virtualHomee.hpp` hob
   `ARDUINOJSON_POSITIVE_EXPONENTIATION_THRESHOLD` auf `1e9` an; mit ArduinoJson 7.4.3
