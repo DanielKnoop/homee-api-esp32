@@ -1,6 +1,17 @@
 #pragma once
 
-#define ARDUINOJSON_POSITIVE_EXPONENTIATION_THRESHOLD 1e9
+// Note: ARDUINOJSON_POSITIVE_EXPONENTIATION_THRESHOLD is deliberately left at
+// its default (1e7). Raising it to 1e9 — as this header did until now — is
+// unsafe with ArduinoJson 7.4.3: values that fit exactly in a float are stored
+// as one, which gives decomposeFloat() six decimal places to work with. It
+// subtracts one per integral digit, so eight or more digits make the count
+// negative, and writeDecimals() then runs `while (width--)` on an int8_t for
+// 255 iterations past a 16-byte stack buffer. Verified on an ESP32-D0WDQ6:
+// serializing 16777215 produced 149 bytes of corrupt JSON containing raw stack
+// contents instead of the expected 14.
+//
+// Large exact values are kept readable by nodeAttributes::GetJSONObject(),
+// which serializes integral numbers as integers — see the note there.
 
 #if defined(ESP32)
 #include <WiFi.h>

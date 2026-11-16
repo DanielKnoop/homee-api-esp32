@@ -1,17 +1,48 @@
 #include "nodeattributes.hpp"
 
+namespace {
+
+// Store values that are exactly integral as integers rather than floats.
+//
+// Two reasons. First, ArduinoJson's default exponentiation threshold is 1e7,
+// so a double like the color maximum 16777215 would otherwise serialize as
+// "1.677722e7" — scientific notation, and rounded to 16777220 on top of it.
+// Second, and worse, ArduinoJson 7.4.3 stores any double that fits exactly in
+// a float as a float, which leaves decomposeFloat() with six decimal places;
+// it subtracts one per integral digit, so eight or more digits drive the count
+// negative and writeDecimals() overruns its stack buffer. Integers take
+// writeInteger() instead and sidestep both problems.
+//
+// JSON does not distinguish 21 from 21.0, and ArduinoJson already strips
+// trailing zeros, so the emitted shape is unchanged for ordinary values.
+inline void setNumber(JsonObject doc, const char* key, double_t value)
+{
+    // Range check first — casting an out-of-range double to int32_t is UB.
+    if (value >= -2147483648.0 && value <= 2147483647.0 &&
+        value == static_cast<double_t>(static_cast<int32_t>(value)))
+    {
+        doc[key] = static_cast<int32_t>(value);
+    }
+    else
+    {
+        doc[key] = value;
+    }
+}
+
+}  // namespace
+
 void nodeAttributes::GetJSONObject(JsonObject doc)
 {
     doc["id"] = this->id;
     doc["node_id"] = this->node_id;
     doc["instance"] = this->instance;
-    doc["minimum"] = this->minimum;
-    doc["maximum"] = this->maximum;
-    doc["current_value"] = this->current_value;
-    doc["target_value"] = this->target_value;
-    doc["last_value"] = this->last_value;
+    setNumber(doc, "minimum", this->minimum);
+    setNumber(doc, "maximum", this->maximum);
+    setNumber(doc, "current_value", this->current_value);
+    setNumber(doc, "target_value", this->target_value);
+    setNumber(doc, "last_value", this->last_value);
     doc["unit"] = this->unit;
-    doc["step_value"] = this->step_value;
+    setNumber(doc, "step_value", this->step_value);
     doc["editable"] = this->editable;
     doc["type"] = this->type;
     doc["state"] = this->state;
