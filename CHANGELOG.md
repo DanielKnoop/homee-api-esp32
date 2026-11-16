@@ -4,7 +4,7 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 die Versionierung an [SemVer](https://semver.org/lang/de/).
 
-## [Unreleased]
+## [0.4.0] — 2026-11-16
 
 ### Added
 - `src/virtualHomee/homee_defines.h` — Enums für Node-Profile, Attribut-Typen, Protokolle
