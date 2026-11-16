@@ -70,7 +70,7 @@ private:
 
     void getSettings(JsonObject jsonDoc);
     void startDiscoveryService();
-    //void stopDiscoveryService();
+    void stopDiscoveryService();
     String getUrlParameterValue(const String& url,const String& parameterName);
     void sendWSMessage(JsonDocument& doc, AsyncWebSocketClient *client);
     void clientConnected();
@@ -93,6 +93,10 @@ public:
     size_t getNumberOfWSClients();
     String getHomeeId();
     void setHomeeId(const String& _homeeId);
+    // Version this vhih reports to the hub (GET:Settings and compatibility_check).
+    // Override before start() if your hub disagrees with the default.
+    String getVersion();
+    void setVersion(const String& _version);
 
     virtualHomee();
     virtualHomee(const String& _homeeId);

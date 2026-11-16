@@ -60,7 +60,13 @@ nodes::nodes()
 
 nodes::~nodes()
 {
-    
+    // nodes owns the node pointers — same contract RemoveNodeById already
+    // follows, and node::~node() applies to its attributes.
+    for(int i = 0; i < this->GetNumberOfNodes(); i++)
+    {
+        delete n[i];
+    }
+    n.clear();
 }
 
 void nodes::RemoveNodeById(int32_t nodeId)

@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 #include "virtualHomee.hpp"
+#include "virtualHomee/homee_defines.h"
+#include "virtualHomee/homee_icons.h"
 
 #if defined(ESP32)
 #include <WiFi.h>
@@ -58,9 +60,10 @@ void setup() {
   Serial.println(WiFi.localIP());
 
 
-  node* n1 = new node(10, 3001, "Luftsensor"); //CANodeProfileTemperatureAndHumiditySensor
-  na1 = n1->AddAttributes(new nodeAttributes(5)); //CAAttributeTypeTemperature
-  na2 = n1->AddAttributes(new nodeAttributes(7)); //CAAttributeTypeRelativeHumidity
+  node* n1 = new node(10, CANodeProfileTemperatureAndHumiditySensor, "Luftsensor");
+  n1->setImage(NodeIconTemperature);
+  na1 = n1->AddAttributes(new nodeAttributes(CAAttributeTypeTemperature));
+  na2 = n1->AddAttributes(new nodeAttributes(CAAttributeTypeRelativeHumidity));
 
   na1->setUnit("°C");
   na1->setMinimumValue(-20);
@@ -68,8 +71,8 @@ void setup() {
   na1->setCurrentValue(21);
   na2->setUnit("%");
 
-  node* n2 = new node(20, 10, "Schalter");
-  schalterAttribute = n2->AddAttributes(new nodeAttributes(1, 200));
+  node* n2 = new node(20, CANodeProfileOnOffPlug, "Schalter");
+  schalterAttribute = n2->AddAttributes(new nodeAttributes(CAAttributeTypeOnOff, 200));
   schalterAttribute->setEditable(1);
   schalterAttribute->setMinimumValue(0);
   schalterAttribute->setMaximumValue(1);
@@ -77,15 +80,15 @@ void setup() {
   schalterAttribute->setCallback(attributeCallbackFunction);
 
 
-  node* n3 = new node(30, 1002, "Color Licht");
-  nodeAttributes* a_on = n3->AddAttributes(new nodeAttributes(1));
+  node* n3 = new node(30, CANodeProfileDimmableExtendedColorLight, "Color Licht");
+  nodeAttributes* a_on = n3->AddAttributes(new nodeAttributes(CAAttributeTypeOnOff));
   a_on->setId( 30 * 100 + 1);
   a_on->setEditable(1);
   a_on->setMinimumValue(0);
   a_on->setMaximumValue(1);
   a_on->setTargetValue(0);
   a_on->setCurrentValue(0);
-  nodeAttributes* a_dimm = n3->AddAttributes(new nodeAttributes(2));
+  nodeAttributes* a_dimm = n3->AddAttributes(new nodeAttributes(CAAttributeTypeDimmingLevel));
   a_dimm->setId( 30 * 100 + 2);
   a_dimm->setEditable(1);
   a_dimm->setUnit("%");
@@ -93,7 +96,7 @@ void setup() {
   a_dimm->setMaximumValue(100);
   a_dimm->setCurrentValue(0 / 2.54);
   a_dimm->setTargetValue(0 / 2.54);
-  nodeAttributes* a_color = n3->AddAttributes(new nodeAttributes(23));
+  nodeAttributes* a_color = n3->AddAttributes(new nodeAttributes(CAAttributeTypeColor));
   a_color->setId( 30 * 100 + 4);
   a_color->setEditable(1);
   a_color->setTargetValue(0);

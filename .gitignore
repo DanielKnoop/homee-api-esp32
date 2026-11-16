@@ -4,4 +4,5 @@
 .vscode/launch.json
 .vscode/ipch
 prod_env.ini
+secrets_env.ini
 .DS_Store

@@ -11,13 +11,15 @@ Zunächst in es notwendig, die homee-Api zu erstellen (den virtualHomee).
 
 ```cpp
 #include "virtualHomee.hpp"
+#include "virtualHomee/homee_defines.h"  // optional: Enums für Profile und Attribut-Typen
+#include "virtualHomee/homee_icons.h"    // optional: Konstanten für node::setImage()
 virtualHomee vhih;
 ```
 
 Diesem virtualHomee müssen Nodes hinzugefügt werden (Vorzugsweise im Bereich Setup).
 
 ```cpp
-node* n1 = new node(10, 3001, "Luftsensor");
+node* n1 = new node(10, CANodeProfileTemperatureAndHumiditySensor, "Luftsensor"); // entspricht 3001
 vhih.addNode(n1);
 ```
 Der Konstruktor vom Node nimmt dabei folgende Attribute entgegen: NodeId, Profile, Name
@@ -25,10 +27,21 @@ Der Konstruktor vom Node nimmt dabei folgende Attribute entgegen: NodeId, Profil
 Diesem Node müssen noch Attribute zugeordnet werden. 
 
 ```cpp
-    na1 = n1->AddAttributes(new nodeAttributes(5));
+    na1 = n1->AddAttributes(new nodeAttributes(CAAttributeTypeTemperature)); // entspricht 5
     na1->setUnit("°C");
     na1->setMinimumValue(-20);
     na1->setMaximumValue(60);
+```
+
+Profil- und Attribut-Typen lassen sich als reine Zahlen angeben oder über die Enums aus
+`homee_defines.h`. Die Enums sind nur lesbarer, technisch identisch — die Datei enthält
+keine Logik, ausschließlich Konstanten.
+
+Das Icon eines Nodes leitet homee **nicht** automatisch aus dem Profil ab. Ohne
+`setImage()` zeigt die App bei selteneren Profilen ein generisches Fragezeichen:
+
+```cpp
+n1->setImage(NodeIconTemperature); // entspricht "nodeicon_temperature"
 ```
 
 Die maximale Anzahl an Nodes und Attributen ist maßgeblich vom Arbeitsspeicher des Boards abhängig. Jedes Node und jedes Attribut belegt knapp 500 Byte im Arbeitsspeicher. Es müssen mindestens 2 kB für dynamischen Speicher wie Sendebuffer etc. verfügbar bleiben.
@@ -60,8 +73,8 @@ Es ist auch möglich, Werte vom homee zu empfangen. Hierzu kann dem Attribute ei
 ```cpp
 void setup()
 {
-  node* n2 = new node(20, 10, "Schalter");
-  schalterAttribute = n2->AddAttributes(new nodeAttributes(1));
+  node* n2 = new node(20, CANodeProfileOnOffPlug, "Schalter");
+  schalterAttribute = n2->AddAttributes(new nodeAttributes(CAAttributeTypeOnOff));
   schalterAttribute->setEditable(1);
   schalterAttribute->setMinimumValue(0);
   schalterAttribute->setMaximumValue(1);
@@ -95,9 +108,23 @@ Die Library ist für ESP8266 und ESP32 Boards ausgelegt.
     * [ESPAsyncTCP-esphome](https://github.com/esphome/ESPAsyncTCP) ^2.0.0 (esphome)
 * [ESPAsyncUDP](https://github.com/me-no-dev/ESPAsyncUDP) (me-no-dev)
 
+## Konstanten
+
+* `src/virtualHomee/homee_defines.h` — Enums für Node-Profile, Attribut-Typen, Protokolle
+  und Status-Codes (49 Gruppen). Struktur und Namenskonvention stammen aus dem
+  [homee-api](https://github.com/stfnhmplr/homee-api) JS-SDK (MIT), die Werte sind gegen
+  die aktuelle homee-Web-App abgeglichen.
+* `src/virtualHomee/homee_icons.h` — `NodeIcon*`-Konstanten für `node::setImage()`.
+  Inoffiziell, aus dem WebSocket-Protokoll eines homee-Cubes zusammengetragen.
+
+Beide Header sind optional: die Library funktioniert unverändert mit reinen Zahlenwerten.
+
 ## Hinweise
 
 Das Projekt ist angelehnt an die node-red Implementierung [node-red-contrib-homee](https://github.com/stfnhmplr/node-red-contrib-homee)
 von stfnhmplr. Vielen Dank, auch an alle anderen Vorreiter aus dem [homee-Forum](https://community.hom.ee).
+
+Die Konstanten-Header gehen auf einen Beitrag von [Oxi75](https://github.com/Oxi75) zurück
+(PR #5). Danke dafür.
 
 Ich stehe in keiner Verbindung zur homee GmbH oder zu codeatelier GmbH

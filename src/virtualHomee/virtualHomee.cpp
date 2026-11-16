@@ -354,7 +354,7 @@ void virtualHomee::stop()
     ws.cleanupClients();
     //Stop Services
     server.end();
-    //this->stopDiscoveryService();
+    this->stopDiscoveryService();
 }
 
 void virtualHomee::startDiscoveryService()
@@ -385,10 +385,12 @@ void virtualHomee::startDiscoveryService()
     }
 }
 
-//void virtualHomee::stopDiscoveryService()
-//{
-//    udp.close();
-//}
+void virtualHomee::stopDiscoveryService()
+{
+    udp.close();
+    // Allow start() to bring the discovery listener back up.
+    this->firstStart = true;
+}
 
 void virtualHomee::updateAttributeValue(nodeAttributes *_attribute, double _value)
 {
@@ -428,6 +430,15 @@ void virtualHomee::setHomeeId(const String& _homeeId)
     this->homeeId = _homeeId;
 }
 
+String virtualHomee::getVersion()
+{
+    return this->version;
+}
+void virtualHomee::setVersion(const String& _version)
+{
+    this->version = _version;
+}
+
 virtualHomee::virtualHomee(const String& _homeeId)
     : virtualHomee()
 {
@@ -446,7 +457,7 @@ virtualHomee::virtualHomee()
     String mac = WiFi.macAddress();
     mac.replace(":", "");
     this->homeeId = mac;
-    this->version = "2.41.3+46ad073c";
+    this->version = "2.41.6+6628d59d";
     this->nds.AddNode(new node(-1, 1, "homee"));
 
     initializeWebServer();

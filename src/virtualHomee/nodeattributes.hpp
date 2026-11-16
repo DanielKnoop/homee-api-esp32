@@ -25,6 +25,7 @@ class nodeAttributes
         uint8_t changed_by_id = 0;
         uint8_t based_on = 1;
         String data = "";
+        String name = "";
         uint32_t getTimestamp();
     public:
         nodeAttributes(uint16_t _type);
@@ -33,6 +34,8 @@ class nodeAttributes
 
         void executeCallback();
         
+        void setName(const String& _name);
+        String getName();
         void setId(uint32_t _id);
         uint32_t getId();
         void setNodeId(uint32_t _node_id);

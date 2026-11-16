@@ -51,6 +51,11 @@ void nodeAttributes::GetJSONObject(JsonObject doc)
     doc["changed_by_id"] = this->changed_by_id;
     doc["based_on"] = this->based_on;
     doc["data"] = this->data;
+    // Only emitted when set — an empty "name" on every attribute would inflate
+    // the GET:nodes payload for no benefit.
+    if (this->name.length() > 0) {
+        doc["name"] = this->name;
+    }
 }
 
 double_t nodeAttributes::getMinimumValue()
@@ -70,7 +75,17 @@ double_t nodeAttributes::getCurrentValue()
 
 size_t nodeAttributes::size()
 {
-    return 350 + this->data.length() + this->unit.length();
+    return 350 + this->data.length() + this->unit.length() + this->name.length();
+}
+
+void nodeAttributes::setName(const String& _name)
+{
+    this->name = _name;
+}
+
+String nodeAttributes::getName()
+{
+    return this->name;
 }
 
 void nodeAttributes::setMinimumValue(double_t _min)
